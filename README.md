@@ -131,7 +131,7 @@ Chegou a tão esperada hora de executar o projecto!
 
  # Expor o serviço na Internet, caso contrário pode testar com ngrok
  ### Fazer a instalação do ngrok, windows, tem para todas plataformas
- [Ngrok acesse ao link](https://ngrok.com/docs/guides/device-gateway/windows/)
+ [Acesse ao link](https://ngrok.com/docs/guides/device-gateway/windows/)
 
  ## Definir a porta para expôr um serviço pelo ngrok
  ```
