@@ -1,0 +1,59 @@
+<!DOCTYPE html> 
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>Student<span>Hub</span></h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <section class="chat-section">
+                <h1>Simplificando a<span> busca de informação</span> e reduzindo filas <span>com estilo</span></h1>
+                <br>
+                <h3 class="FAQ">Perguntas Frequentes</h3>
+                <div class="suggestions">
+                    <p>Como posso usar sistema fácil e rápido do HelpDesk?</p>
+                    <p>Quais são os requisitos para fazer declaração de notas?</p>
+                    <p>Qual é o contacto do HelpDesk?</p>
+                    <p>Como emitir a entidade e referência no sistema?</p>
+                </div>
+            </section>
+            <section class="chat-section">
+                <div id="messages" class="messages">
+                    <div class="bot-message">
+                        <strong>StudentHub:</strong> Olá! Como posso ajudá-lo hoje?
+                    </div>
+                </div>
+            </section>
+            <form action="" method="post" id="chat-form" class="chat-form">
+                <div class="input-container">
+                    <div class="chat-box">
+                        <input type="text" id="message" placeholder="Pergunte aqui" />
+                    </div>
+                </div>
+                <input type="submit" class="button" value="➤">
+            </form>
+        </main>
+    </div>
+
+    <!-- Definir as variáveis necessárias para o JavaScript externo -->
+    <script>
+        const CHATBOT_URL = "{{ url_for('chatbot') }}";
+        const CSRF_TOKEN = "{{ csrf_token() }}";
+    </script>
+
+    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+</body>
+</html>

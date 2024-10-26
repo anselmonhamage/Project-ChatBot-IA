@@ -1,0 +1,27 @@
+{% extends 'base_signup.html' %}
+{% block title %} {{ super() }} - Cadastrar {% endblock %}
+{% block content %}
+<div class="signup-container">
+    <img src="{{ url_for('static', filename='images/example.png') }}" alt="Logo" class="logo">
+    <h1>Faça o <span>Cadastro</span></h1>
+    <form action="" method="post">
+        {{ form.csrf_token }}
+        <label for="">Name</label>
+            {{ form.name(class="form-control", placeholder="Enter your name") }}
+        <label for="">Código de estudante</label>
+            {{ form.code_id(class="form-control", placeholder="Enter your usercode") }}
+        <label for="">Email</label>
+            {{ form.email(class="form-control", placeholder="Enter your email") }}
+        <label for="">Telefone</label>
+            {{ form.tel(class="form-control", placeholder="Enter your password") }}
+        <label for="">Password</label>
+            {{ form.password(class="form-control", placeholder="Enter your password") }}
+        <label for=""> Confirme a Password</label>
+            {{ form.confirm_password(class="form-control", placeholder="Confirm your password") }}
+            <button type="submit" class="btn btn-primary" >Sign Up</button>
+    </form>
+    <div class="login-link">
+        Already have an account? <a href="{{ url_for('login') }}">Login</a>
+    </div>
+</div>
+{% endblock %}

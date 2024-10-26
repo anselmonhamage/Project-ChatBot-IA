@@ -1,0 +1,13 @@
+{% extends "base_add_question.html" %}
+{% block title %} {{ super() }} - Adicionar Pergunta {% endblock %}
+{% block content %}
+    <h1>Adicionar Nova Pergunta</h1>
+    <form method="POST" action="{{ url_for('add_question') }}">
+        {{ form.csrf_token }}
+        <label for="">Pergunta</label>
+            {{ form.question_text(class="form-control", placeholder="Escreva uma questão") }}
+        <label for="">Resposta</label>
+            {{ form.answer(class="form-control", placeholder="Escreva uma possível resposta") }}
+        <button type="submit">Adicionar</button>
+    </form>
+{% endblock %}

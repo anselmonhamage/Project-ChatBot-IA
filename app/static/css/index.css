@@ -1,0 +1,129 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #fff;
+    color: #333;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+}
+
+.logo img {
+    width: 50px;
+}
+h1 span{
+    color: #00b8d4;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 50px;
+    background-color: #f9f9f9;
+}
+li > a{
+    margin-right: 20px;
+    border: 1px solid black;
+    padding: 10px;
+    border-radius: 3px;
+}
+li a:hover{
+    background: #00b8d4;
+    color: white;
+    border: none;
+    border: 3px;
+}
+
+.content {
+    max-width: 50%;
+}
+
+.content h1 {
+    font-size: 3rem;
+    color: #000;
+}
+
+.content p {
+    margin: 20px 0;
+    font-size: 1.2rem;
+    color: #666;
+}
+
+p > span{
+    color: #00b8d4;
+    font-weight: bold;
+}
+
+button {
+    padding: 15px 30px;
+    background-color: #00b8d4;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #98e8f4;
+    color: black;
+}
+
+.app-showcase img {
+    width: 400px;
+    height: 400px;
+    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.1);
+}
+/* carossel */
+
+.carousel-container {
+    
+    width: 100%;
+    overflow: hidden;
+    
+    padding: -10px;
+    
+    display: flex;
+    justify-content: center;
+}
+
+.carousel {
+    display: flex;
+    width: 100%;
+    transform: translateX(0);
+    transition: transform 0.5s ease;
+}
+
+.carousel-item {
+    min-width: 100%;
+    text-align: left;
+    font-size: 1.5rem;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.carousel-item:not(:first-child) {
+    border-bottom: 2px solid #ddd;
+}

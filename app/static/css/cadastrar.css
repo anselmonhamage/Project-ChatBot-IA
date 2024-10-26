@@ -1,0 +1,96 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f9f9f9;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 140vh;
+    color: #333;
+}
+
+.signup-container {
+    background: #fff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    max-width: 400px;
+    width: 90%;
+}
+
+.signup-container h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: #000;
+    text-align: center;
+}
+
+.signup-container h1 span {
+    color: #00b8d4;
+}
+
+.signup-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.signup-container label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.signup-container input[type="text"],
+.signup-container input[type="email"],
+.signup-container input[type="password"] {
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.signup-container .btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    text-align: center;
+}
+
+.btn-primary {
+    background: #000;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #333;
+}
+
+.signup-container .login-link {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    text-align: center;
+    color: #777;
+}
+
+.signup-container .login-link a {
+    color: #00b8d4;
+    text-decoration: none;
+}
+
+.signup-container .login-link a:hover {
+    text-decoration: underline;
+}
+
+.logo {
+    width: 30%;
+    height: 30%;
+    object-fit: cover;
+    border-radius: 20%;
+    display: block;
+    margin: 0 auto 20px auto; /* Centraliza horizontalmente e adiciona margem inferior */
+}

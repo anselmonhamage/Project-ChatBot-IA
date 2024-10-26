@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>Student<span>Hub</span></h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('login') }}">Sign In</a></li>
+                
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="content">
+            <div class="carousel-container">
+                <div class="carousel">
+                    <div class="carousel-item"><h1>Assistência.</h1></div>
+                    <div class="carousel-item"><h1>Consulta de dados.</h1></div>
+                    <div class="carousel-item"><h1>Relatorios semestrais</h1></div>
+                    <div class="carousel-item"><h1>Conversa em tempo real com a secretaria.</h1> </div>
+                    <div class="carousel-item"> <h1>Uma forma nova <br>de ir ao HelpDesk</h1></div>
+                </div>
+            </div>
+
+            <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+           
+            <p><span>Apoio </span> ao estudante, <span>online!</span></p>
+            <button><a href="{{ url_for('signup') }}">Sign up</a></button>
+        </div>
+        <div class="app-showcase">
+            <img src="{{ url_for('static', filename='images/template.jpg') }}" alt="App Showcase" style="margin-right: 80px;">
+        </div>
+    </main>
+</body>
+</html>

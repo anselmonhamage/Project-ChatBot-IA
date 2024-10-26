@@ -1,0 +1,23 @@
+{% extends 'base_login.html' %}
+{% block title %} {{ super() }} - Login {% endblock %}
+{% block content %}
+<div class="login-container">
+    <img src="{{ url_for('static', filename='images/example.png') }}" alt="" class="logo">
+    <h1>Log<span>in</span></h1>
+    <br>
+    <form action="" method="post">
+        {{ form.csrf_token }}
+        <label for="">Código de estudante</label>
+            {{ form.code_id(class="form-control", placeholder="Enter your usercode") }}
+        <label for="">Password</label>
+            {{ form.password(class="form-control", placeholder="Enter your password") }}
+        <label for="">
+            {{ form.remember_me }} Lembre-me
+        </label>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+    <div class="signup-link">
+        Don't have an account? <a href="{{ url_for('signup') }}">Sign up</a>
+    </div>
+</div>
+{% endblock %}
