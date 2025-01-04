@@ -1,4 +1,4 @@
-# Projecto-ChatBot-IA
+# Project-ChatBot-IA
  Este projecto será disponibilizado de forma que todos desenvolvedores possam contribuir!
 
  # **documentação**
@@ -17,7 +17,7 @@
 
  ### Entrando na raiz do Projecto
  `
-    $ cd Projecto-ChatBot-AI/
+    $ cd Project-ChatBot-AI/
  `
 
 ### Instalando o virtualenv
@@ -129,7 +129,7 @@ Chegou a tão esperada hora de executar o projecto!
     $ python run.py runserver
  ```
 
- # Expor o serviço na Internet, caso contrário pode testar com ngrok
+ # Expôr o serviço na Internet, caso contrário pode testar com ngrok
  ### Fazer a instalação do ngrok, windows, tem para todas plataformas
  [Acesse ao link](https://ngrok.com/docs/guides/device-gateway/windows/)
 
