@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <title>HelpDesk - Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
 </head>
 <body>
     <div class="container">
@@ -43,7 +43,10 @@
                         <input type="text" id="message" placeholder="Pergunte aqui" />
                     </div>
                 </div>
-                <input type="submit" class="button" value="➤">
+                <button type="submit" class="button" id="button">
+                    <span class="button-text" id="button-text">➤</span>
+                    <span class="loading-spinner"></span>
+                </button>
             </form>
         </main>
     </div>
@@ -55,5 +58,6 @@
     </script>
 
     <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

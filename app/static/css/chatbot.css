@@ -126,10 +126,44 @@ main {
 }
 
 .button {
-    padding: 12px 20px;
+    position: relative;
+    padding: 10px 20px;
     background-color: #00d1b2;
     border: none;
     color: white;
-    border-radius: 8px;
+    border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.loading-spinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #4398db;
+    border-radius: 50%;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: translateY(-50%) rotate(0deg); }
+    100% { transform: translateY(-50%) rotate(360deg); }
+}
+
+.button-loading .button-text {
+    margin-right: 30px;
+}
+
+.button-loading .loading-spinner {
+    display: inline-block;
 }

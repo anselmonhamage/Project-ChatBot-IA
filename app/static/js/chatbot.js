@@ -2,6 +2,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const chatForm = document.getElementById('chat-form');
     const messagesDiv = document.getElementById('messages');
     const inputField = document.getElementById('message');
+    const button = document.getElementById('button');
+    const span = document.getElementById('button-text')
+
+    // reativa o botão e remove o efeito de loading
+    function enableButton() {
+        button.disabled = false;
+        button.classList.remove('button-loading');
+        span.innerText = "➤"
+    }
+
 
     chatForm.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -38,11 +48,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 botDiv.classList.add('bot-message');
                 botDiv.innerHTML = `<strong>StudentHub:</strong> ${data.answer}`;
                 messagesDiv.appendChild(botDiv);
+                enableButton();
             } else {
                 const errorDiv = document.createElement('div');
                 errorDiv.classList.add('bot-message');
                 errorDiv.innerHTML = `<strong>StudentHub:</strong> Desculpe, não entendi sua mensagem.`;
                 messagesDiv.appendChild(errorDiv);
+                enableButton();
             }
 
             // Rolar para a última mensagem
@@ -54,6 +66,7 @@ document.addEventListener('DOMContentLoaded', function () {
             errorDiv.classList.add('bot-message');
             errorDiv.innerHTML = `<strong>Bot:</strong> Ocorreu um erro ao processar sua mensagem.`;
             messagesDiv.appendChild(errorDiv);
+            enableButton();
         });
     });
 });
