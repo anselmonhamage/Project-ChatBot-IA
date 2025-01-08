@@ -7,45 +7,43 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
 </head>
 <body>
-    <div class="base-container">
-        {% block content %}
-        <img src="{{ url_for('static', filename='images/example.png') }}" alt="Logo" class="logo">
-        <h1>Editar<span>Usuário</span></h1>
-        <form method="POST" action="{{ url_for('update_profile') }}">
-            {{ form.hidden_tag() }}
-            <div>
-                {{ form.name.label }}<br>
-                {{ form.name(size=32) }}
-                {% for error in form.name.errors %}
-                    <span class="error">{{ error }}</span>
-                {% endfor %}
-            </div>
-            <div>
-                {{ form.code_id.label }}<br>
-                {{ form.code_id(size=32) }}
-                {% for error in form.code_id.errors %}
-                    <span class="error">{{ error }}</span>
-                {% endfor %}
-            </div>
-            <div>
-                {{ form.email.label }}<br>
-                {{ form.email(size=32) }}
-                {% for error in form.email.errors %}
-                    <span class="error">{{ error }}</span>
-                {% endfor %}
-            </div>
-            <div>
-                {{ form.tel.label }}<br>
-                {{ form.tel(size=32) }}
-                {% for error in form.tel.errors %}
-                    <span class="error">{{ error }}</span>
-                {% endfor %}
-            </div>
-            <div>
-                <button type="submit" class="btn btn-primary">Atualizar</button>
-            </div>
-        </form>
-        {% endblock %}
-    </div>
+    {% block content %}
+    <img src="{{ url_for('static', filename='images/example.png') }}" alt="Logo" class="logo">
+    <h1>Editar<span>Usuário</span></h1>
+    <form method="POST" action="{{ url_for('update_profile') }}">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.name.label }}<br>
+            {{ form.name(size=32) }}
+            {% for error in form.name.errors %}
+                <span class="error">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.code_id.label }}<br>
+            {{ form.code_id(size=32) }}
+            {% for error in form.code_id.errors %}
+                <span class="error">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.email.label }}<br>
+            {{ form.email(size=32) }}
+            {% for error in form.email.errors %}
+                <span class="error">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.tel.label }}<br>
+            {{ form.tel(size=32) }}
+            {% for error in form.tel.errors %}
+                <span class="error">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Atualizar</button>
+        </div>
+    </form>
+    {% endblock %}
 </body>
 </html>
