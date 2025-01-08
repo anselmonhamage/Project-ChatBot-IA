@@ -9,6 +9,7 @@ from twilio.twiml.messaging_response import MessagingResponse
 from app.services.twilio_service import client, to_whatsapp_number, from_whatsapp_number
 from app.services.format_text import format_text
 from app.services.chatbot_genai import model
+
 from app.models.tables import User, Question
 from app.models.forms import LoginForm, Cadastro, UpdateProfileForm, QuestionForm
 
@@ -28,7 +29,7 @@ def index():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(code_id=form.code_id.data).first()
+        user = User.query.filter_by(email=form.email.data).first()
         if user and check_password_hash(user.password, form.password.data):
             login_user(user)
             flash("Login efetuado com sucesso!", "success")
@@ -56,7 +57,6 @@ def signup():
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data)
         new_user = User(
-            code_id=form.code_id.data,
             password=hashed_password,
             name=form.name.data,
             email=form.email.data,
@@ -75,7 +75,6 @@ def update_profile():
     form = UpdateProfileForm()
     if form.validate_on_submit():
         current_user.name = form.name.data
-        current_user.code_id = form.code_id.data
         current_user.email = form.email.data
         current_user.tel = form.tel.data
         db.session.commit()
@@ -83,7 +82,6 @@ def update_profile():
         return redirect(url_for('chatbot'))
     elif request.method == 'GET':
         form.name.data = current_user.name
-        form.code_id.data = current_user.code_id
         form.email.data = current_user.email
         form.tel.data = current_user.tel
     return render_template('edit.html', form=form)
@@ -106,6 +104,7 @@ def delete_user(id):
     return redirect(url_for('index'))
 
 
+# Resolver problemas de filtragem de respostas do banco de dados para IA Generativa para a página web
 @app.route("/chatbot", methods=["GET", "POST"])
 @login_required
 def chatbot():
@@ -146,8 +145,9 @@ def chatbot():
     return render_template("chatbot.html")
 
 
+# Resolver problemas de filtragem de respostas do banco de dados para IA Generativa para a página web
 @app.route("/add_question", methods=['GET', 'POST'])
-@cross_origin()
+@cross_origin() # Redescubrir a razão de colocar essa linha nessa rota
 @login_required
 def add_question():
     form = QuestionForm()
@@ -177,6 +177,7 @@ def responder_mensagem(msg):
         from_=from_whatsapp_number, 
         to=to_whatsapp_number
     )
+
 
 @app.route('/whatsapp', methods=['GET', 'POST'])
 @csrf.exempt

@@ -20,13 +20,6 @@
             {% endfor %}
         </div>
         <div>
-            {{ form.code_id.label }}<br>
-            {{ form.code_id(size=32) }}
-            {% for error in form.code_id.errors %}
-                <span class="error">{{ error }}</span>
-            {% endfor %}
-        </div>
-        <div>
             {{ form.email.label }}<br>
             {{ form.email(size=32) }}
             {% for error in form.email.errors %}

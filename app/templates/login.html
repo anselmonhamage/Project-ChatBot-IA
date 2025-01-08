@@ -7,8 +7,8 @@
     <br>
     <form action="" method="post">
         {{ form.csrf_token }}
-        <label for="">Código de estudante</label>
-            {{ form.code_id(class="form-control", placeholder="Enter your usercode") }}
+        <label for="">Email</label>
+            {{ form.email(class="form-control", placeholder="Enter your email") }}
         <label for="">Password</label>
             {{ form.password(class="form-control", placeholder="Enter your password") }}
         <label for="">

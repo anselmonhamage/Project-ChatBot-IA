@@ -21,4 +21,4 @@ cors = CORS()
 cors.init_app(app, resources={})
 
 from app.models import tables
-from app.controllers import default
+from app.controllers import routes

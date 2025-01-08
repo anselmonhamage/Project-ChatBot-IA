@@ -7,7 +7,6 @@ class User(UserMixin, db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    code_id = db.Column(db.String(100), unique=True)
     name = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
@@ -30,15 +29,14 @@ class User(UserMixin, db.Model):
     
     questions = db.relationship('Question', backref='author', lazy=True)
 
-    def __init__(self, code_id, password, name, email, tel):
-        self.code_id = code_id
+    def __init__(self, password, name, email, tel):
         self.password = password
         self.name = name
         self.email = email
         self.tel = tel
 
     def __repr__(self):
-        return f"{self.__class__.__name__}, name: {self.name}: {self.code_id}"
+        return f"{self.__class__.__name__}, name: {self.name}: {self.email}"
 
 # A Classe que representa a nossa tabela questions em nosso banco de dados
 class Question(db.Model):
