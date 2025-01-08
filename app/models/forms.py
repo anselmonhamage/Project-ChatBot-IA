@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, EmailField, TextAreaField
+from wtforms import StringField, PasswordField, BooleanField, EmailField
 from wtforms.validators import DataRequired, EqualTo
 
 class LoginForm(FlaskForm):
@@ -22,5 +22,5 @@ class UpdateProfileForm(FlaskForm):
     tel = StringField("tel", validators=[DataRequired()])
 
 class QuestionForm(FlaskForm):
-    question_text = TextAreaField('question', validators=[DataRequired()])
-    answer = TextAreaField('answer', validators=[DataRequired()])
+    question_text = StringField('question', validators=[DataRequired()])
+    answer = StringField('answer', validators=[DataRequired()])
