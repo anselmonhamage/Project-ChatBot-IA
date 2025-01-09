@@ -5,20 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HelpDesk - Chatbot</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div class="container">
+
         <header>
             <div class="logo">
                 <h1>Student<span>Hub</span></h1>
             </div>
             <nav>
                 <ul>
-                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    <li><a href="{{ url_for('logout') }}"><i class="fa fa-sign-out-alt"></i> Logout</a></li>
+                    <li><a href="{{ url_for('update_profile') }}"><i class="fa fa-user-edit"></i> Atualizar Perfil</a></li>
                 </ul>
             </nav>
         </header>
+
         <main>
+
             <section class="chat-section">
                 <h1>Simplificando a<span> busca de informação</span> com <span>estilo</span></h1>
                 <br>
@@ -30,6 +35,7 @@
                     <p>Dê-me dicas de Estudos?</p>
                 </div>
             </section>
+
             <section class="chat-section">
                 <div id="messages" class="messages">
                     <div class="bot-message">
@@ -37,18 +43,21 @@
                     </div>
                 </div>
             </section>
+
             <form action="" method="post" id="chat-form" class="chat-form">
                 <div class="input-container">
                     <div class="chat-box">
                         <input type="text" id="message" placeholder="Pergunte aqui" />
+                        <button type="submit" class="button" id="button">
+                            <span class="button-text" id="button-text">➤</span>
+                            <span class="loading-spinner"></span>
+                        </button>
                     </div>
                 </div>
-                <button type="submit" class="button" id="button">
-                    <span class="button-text" id="button-text">➤</span>
-                    <span class="loading-spinner"></span>
-                </button>
             </form>
+
         </main>
+
     </div>
 
     <!-- Definir as variáveis necessárias para o JavaScript externo -->

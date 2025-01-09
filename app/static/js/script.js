@@ -8,7 +8,7 @@ document.getElementById('chat-form').addEventListener('submit', function(e) {
     // Desabilita o botão e adiciona o efeito de loading
     function disableButton() {
         button.disabled = true;
-        span.innerText = ""
+        span.textContent = null
         button.classList.add('button-loading');
     }
 
