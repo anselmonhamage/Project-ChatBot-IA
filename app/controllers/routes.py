@@ -19,8 +19,8 @@ def load_user(id):
     return User.query.filter_by(id=id).first()
 
 
-@app.route("/index")
 @app.route("/")
+@app.route("/index")
 def index():
     return render_template('index.html')
 
@@ -64,12 +64,12 @@ def signup():
         )
         db.session.add(new_user)
         db.session.commit()
-        flash("Sua conta foi criada com sucesso! Agora você pode fazer login.", "success")
+        flash("Sua conta foi criada com sucesso!", "success")
         return redirect(url_for('login'))
     return render_template('signup.html', form=form)
 
 
-@app.route("/update_profile", methods=['GET', 'POST'])
+@app.route("/profile/update", methods=['GET', 'POST'])
 @login_required
 def update_profile():
     form = UpdateProfileForm()
@@ -87,24 +87,27 @@ def update_profile():
     return render_template('edit.html', form=form)
 
 
-# Contém bugs que precisam de resolução.
-@app.route("/delete_user/int:<id>", methods=["GET", "POST"])
-@app.route("/delete_user", defaults = {"id":None})
+@app.route("/user/delete/<int:id>")
 @login_required
 def delete_user(id):
-    if current_user.id != id:
-        flash("Você só pode excluir sua conta!", "danger")
-        return redirect(url_for('chatbot'))
-
     user = User.query.get_or_404(id)
-    logout_user()
     db.session.delete(user)
     db.session.commit()
-    flash("Sua conta foi excluída com sucesso!", "info")
+    flash("A conta foi excluída com sucesso!", "info")
     return redirect(url_for('index'))
 
 
-# Resolver problemas de filtragem de respostas do banco de dados para IA Generativa para a página web
+@app.route("/profile/delete")
+@login_required
+def delete_profile():
+    user = User.query.get_or_404(current_user.id)
+    logout_user()
+    db.session.delete(user)
+    db.session.commit()
+    flash("A conta foi excluída com sucesso!", "info")
+    return redirect(url_for('index'))
+
+
 @app.route("/chatbot", methods=["GET", "POST"])
 @login_required
 def chatbot():
@@ -114,27 +117,20 @@ def chatbot():
         if not user_message:
             return jsonify({"error": "Mensagem vazia."}), 400
 
-        # Busca perguntas semelhantes no banco de dados
         similar_questions = Question.query.filter(Question.question_text.ilike(f"%{user_message}%")).all()
 
         if similar_questions:
-            # Seleciona a primeira resposta encontrada
             answer = similar_questions[0].answer
         else:
             all_questions = Question.query.all()
 
-            # Prepara o contexto com todas as perguntas e respostas do banco de dados
             contexto = ""
             for question in all_questions:
-                contexto += f"Pergunta: {question.question_text}\nResposta: {question.answer}\n\n"
+                contexto += f"Pergunta: {question.question_text}\n Resposta: {question.answer}\n"
 
-            # Adiciona o contexto à pergunta do usuário
             try:
-                # Inclui o contexto no modelo de IA
-                response = model.generate_content(f"Use o seguinte contexto {contexto} para responder aseguinte, \nPergunta: {user_message}")
+                response = model.generate_content(f"Use o seguinte contexto {contexto} para responder aseguinte,\n Pergunta: {user_message}")
                 aux = response.text.strip()
-
-                # Opção html gera a versão com HTML (negrito) ou Opção plain gera a versão sem negrito (plain text)
                 answer = format_text(aux, option='plain')
             except Exception as e:
                 print(f"Erro ao processar a resposta: {str(e)}")
@@ -145,9 +141,8 @@ def chatbot():
     return render_template("chatbot.html")
 
 
-# Resolver problemas de filtragem de respostas do banco de dados para IA Generativa para a página web
 @app.route("/add_question", methods=['GET', 'POST'])
-@cross_origin() # Redescubrir a razão de colocar essa linha nessa rota
+# @cross_origin()
 @login_required
 def add_question():
     form = QuestionForm()
@@ -182,9 +177,8 @@ def responder_mensagem(msg):
 @app.route('/whatsapp', methods=['GET', 'POST'])
 @csrf.exempt
 def whatsapp():
-     # Verificar se a requisição tem o campo 'Body' (a mensagem)
-    user_message = request.form.get('Body', '')  # Captura a mensagem recebida
-    # Busca perguntas semelhantes no banco de dados
+    user_message = request.form.get('Body', '') 
+
     similar_questions = Question.query.filter(Question.question_text.ilike(f"%{user_message}%")).all()
 
     response = MessagingResponse()
@@ -192,25 +186,20 @@ def whatsapp():
     msg.body(f"Recebemos sua mensagem: {user_message}")
 
     if similar_questions:
-        # Seleciona a primeira resposta encontrada
         answer = similar_questions[0].answer
         responder_mensagem(answer)
     else:
         all_questions = Question.query.all()
 
-    # Prepara o contexto com todas as perguntas e respostas do banco de dados
-    contexto = ""
-    for question in all_questions:
-        contexto += f"Pergunta: {question.question_text}\nResposta: {question.answer}\n\n"
+        contexto = ""
+        for question in all_questions:
+            contexto += f"Pergunta: {question.question_text}\n Resposta: {question.answer}\n"
+        
+        response = model.generate_content(f"Use o seguinte contexto {contexto} para responder a seguinte,\n Pergunta: {user_message}")
+        aux = response.text.strip()
 
-            
-    # Inclui o contexto no modelo de IA
-    response = model.generate_content(f"Use o seguinte contexto {contexto} para responder a seguinte, \nPergunta: {user_message}")
-    aux = response.text.strip()
+        answer = format_text(aux, option='plain')  
 
-    # Opção html gera a versão com HTML (negrito) ou Opção plain gera a versão sem negrito (plain text)
-    answer = format_text(aux, option='plain')  
-
-    responder_mensagem(answer)
+        responder_mensagem(answer)
 
     return str(msg)

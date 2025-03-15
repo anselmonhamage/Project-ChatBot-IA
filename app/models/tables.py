@@ -2,7 +2,6 @@ from flask_login import UserMixin
 from app import db
 
 
-# Podemos fazer a classe User herdar da classe UserMixin para facilitar integração com flask login
 class User(UserMixin, db.Model):
     __tablename__ = "users"
 
@@ -38,7 +37,7 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return f"{self.__class__.__name__}, name: {self.name}: {self.email}"
 
-# A Classe que representa a nossa tabela questions em nosso banco de dados
+
 class Question(db.Model):
     __tablename__= "questions"
 
