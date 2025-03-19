@@ -20,6 +20,17 @@
                     <li><a href="{{ url_for('update_profile') }}"><i class="fa fa-user-edit"></i> Atualizar Perfil</a></li>
                 </ul>
             </nav>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <div class="alert alert-warning">
+                    <ul class="flashes">
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            {% endwith %}
         </header>
 
         <main>
@@ -28,11 +39,11 @@
                 <h1>Simplificando a<span> busca de informação</span> com <span>estilo</span></h1>
                 <br>
                 <h3 class="FAQ">Perguntas Frequentes</h3>
-                <div class="suggestions">
-                    <p>Como posso usar sistema fácil e rápido do HelpDesk?</p>
-                    <p>Quais são os requisitos para fazer uso do Sistema?</p>
-                    <p>Qual é o contacto do HelpDesk?</p>
-                    <p>Dê-me dicas de Estudos?</p>
+                <div class="faq-questions">
+                    <button class="faq-button">Como posso usar sistema fácil e rápido do HelpDesk?</button>
+                    <button class="faq-button">Quais são os requisitos para fazer uso do Sistema?</button>
+                    <button class="faq-button">Qual é o contacto do HelpDesk?</button>
+                    <button class="faq-button">Dê-me dicas de Estudos?</button>   
                 </div>
             </section>
 
@@ -60,7 +71,6 @@
 
     </div>
 
-    <!-- Definir as variáveis necessárias para o JavaScript externo -->
     <script>
         const CHATBOT_URL = "{{ url_for('chatbot') }}";
         const CSRF_TOKEN = "{{ csrf_token() }}";

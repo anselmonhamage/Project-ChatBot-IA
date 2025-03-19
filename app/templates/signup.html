@@ -1,10 +1,21 @@
-{% extends 'base_signup.html' %}
+{% extends 'base.html' %}
 {% block title %} {{ super() }} - Cadastrar {% endblock %}
 {% block content %}
 <div class="signup-container">
     <img src="{{ url_for('static', filename='images/example.png') }}" alt="Logo" class="logo">
     <h1>Faça o <span>Cadastro</span></h1>
-    <form action="" method="post">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-warning">
+            <ul class="flashes">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    {% endwith %}
+    <form action="" method="POST">
         {{ form.csrf_token }}
         <label for="">Name</label>
             {{ form.name(class="form-control", placeholder="Enter your name") }}

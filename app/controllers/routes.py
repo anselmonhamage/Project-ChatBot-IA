@@ -2,7 +2,6 @@ from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from app import app, db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_cors import cross_origin
 from app import csrf
 from twilio.twiml.messaging_response import MessagingResponse
 
@@ -12,6 +11,8 @@ from app.services.chatbot_genai import model
 
 from app.models.tables import User, Question
 from app.models.forms import LoginForm, Cadastro, UpdateProfileForm, QuestionForm
+
+from app.auth.decorators import auth_role
 
 
 @login_manager.user_loader
@@ -25,35 +26,16 @@ def index():
     return render_template('index.html')
 
 
-@app.route("/login", methods=["POST", "GET"])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user and check_password_hash(user.password, form.password.data):
-            login_user(user)
-            flash("Login efetuado com sucesso!", "success")
-            return redirect(url_for("chatbot"))
-        else:
-            flash("Login Inválido!.", "danger")
-
-    return render_template("login.html", form=form)
-
-
-@app.route("/logout")
-@login_required
-def logout():
-    logout_user()
-    flash("Você saiu da sessão.", "info")
-    return redirect(url_for("index"))
-
-
 @app.route("/signup", methods=['POST', 'GET'])
 def signup():
-    if current_user.is_authenticated:
-        return redirect(url_for("chatbot"))
-
+    
     form = Cadastro()
+    user = User.query.filter_by(email=form.email.data).first()
+
+    if user:
+        flash("Esse usuário já existe!")
+        return redirect(url_for('signup'))
+
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data)
         new_user = User(
@@ -67,6 +49,34 @@ def signup():
         flash("Sua conta foi criada com sucesso!", "success")
         return redirect(url_for('login'))
     return render_template('signup.html', form=form)
+
+
+@app.route("/login", methods=["POST", "GET"])
+def login():
+
+    if current_user.is_authenticated:
+        return redirect(url_for("chatbot"))
+    
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember_me.data)
+            flash("Login efetuado com sucesso!", "success")
+            return redirect(url_for("chatbot"))
+        else:
+            flash("Login Inválido!.", "danger")
+
+    return render_template("login.html", form=form)
+
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash("Sessão Encerrada!", "info")
+    return redirect(url_for("index"))
 
 
 @app.route("/profile/update", methods=['GET', 'POST'])
@@ -89,6 +99,7 @@ def update_profile():
 
 @app.route("/user/delete/<int:id>")
 @login_required
+@auth_role("admin")
 def delete_user(id):
     user = User.query.get_or_404(id)
     db.session.delete(user)
@@ -106,6 +117,31 @@ def delete_profile():
     db.session.commit()
     flash("A conta foi excluída com sucesso!", "info")
     return redirect(url_for('index'))
+
+
+@app.route("/add/question", methods=['GET', 'POST'])
+@login_required
+@auth_role("admin")
+def add_question():
+    form = QuestionForm()
+    if request.method == 'POST':
+        question_text = form.question_text.data
+        answer = form.answer.data
+        if not question_text or not answer:
+            flash("Ambos campos de questão e resposta são obrigatórios!", "warning")
+            return redirect(url_for('add_question'))
+        new_question = Question(
+            question_text=question_text,
+            answer=answer,
+            user_id=current_user.id
+        )
+
+        db.session.add(new_question)
+        db.session.commit()
+        flash("Nova questão adicionada com sucesso!", "success")
+        return redirect(url_for('chatbot'))
+    
+    return render_template('add_question.html', form=form)
 
 
 @app.route("/chatbot", methods=["GET", "POST"])
@@ -139,31 +175,6 @@ def chatbot():
         return jsonify({"answer": answer})
 
     return render_template("chatbot.html")
-
-
-@app.route("/add_question", methods=['GET', 'POST'])
-# @cross_origin()
-@login_required
-def add_question():
-    form = QuestionForm()
-    if request.method == 'POST':
-        question_text = form.question_text.data
-        answer = form.answer.data
-        if not question_text or not answer:
-            flash("Ambos campos de questão e resposta são obrigatórios!", "warning")
-            return redirect(url_for('add_question'))
-        new_question = Question(
-            question_text=question_text,
-            answer=answer,
-            user_id=current_user.id
-        )
-
-        db.session.add(new_question)
-        db.session.commit()
-        flash("Nova questão adicionada com sucesso!", "success")
-        return redirect(url_for('chatbot'))
-    
-    return render_template('add_question.html', form=form)
 
 
 def responder_mensagem(msg):

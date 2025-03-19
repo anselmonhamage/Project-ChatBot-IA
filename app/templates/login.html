@@ -1,11 +1,21 @@
-{% extends 'base_login.html' %}
+{% extends 'base.html' %}
 {% block title %} {{ super() }} - Login {% endblock %}
 {% block content %}
 <div class="login-container">
     <img src="{{ url_for('static', filename='images/example.png') }}" alt="" class="logo">
     <h1>Log<span>in</span></h1>
-    <br>
-    <form action="" method="post">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-warning">
+            <ul class="flashes">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    {% endwith %}
+    <form action="" method="POST">
         {{ form.csrf_token }}
         <label for="">Email</label>
             {{ form.email(class="form-control", placeholder="Enter your email") }}

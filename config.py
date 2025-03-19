@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 from dotenv import load_dotenv
 
@@ -9,13 +10,7 @@ database = os.environ.get("MSSQL_DB")
 driver = os.environ.get("MSSQL_DRIVER")
 secret_key = os.environ.get("SECRET_KEY")
 
-# configurações de conexão
-server = server
-database = database
-driver = driver
-
 SQLALCHEMY_DATABASE_URI = f"mssql+pyodbc://{server}/{database}?driver={driver}"
-
+REMEMBER_COOKIE_DURATION = timedelta(days=30)
 SQLALCHEMY_TRACK_MODIFICATION = False
-
 SECRET_KEY = secret_key

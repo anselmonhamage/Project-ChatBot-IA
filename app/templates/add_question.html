@@ -1,11 +1,22 @@
-{% extends "base_add_question.html" %}
-{% block title %} {{ super() }} - Adicionar Pergunta {% endblock %}
+{% extends "base.html" %}
+{% block title %} {{ super() }} - Adicionar Questão {% endblock %}
 {% block content %}
 <div class="base-container">
-    <h1>Adicionar Nova Pergunta</h1>
+    <h1>Adicionar Nova Questão</h1>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-warning">
+            <ul class="flashes">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    {% endwith %}
     <form method="POST" action="{{ url_for('add_question') }}">
         {{ form.csrf_token }}
-        <label for="">Pergunta</label>
+        <label for="">Questão</label>
             {{ form.question_text(class="form-control", placeholder="Escreva uma questão") }}
         <label for="">Resposta</label>
             {{ form.answer(class="form-control", placeholder="Escreva uma possível resposta") }}

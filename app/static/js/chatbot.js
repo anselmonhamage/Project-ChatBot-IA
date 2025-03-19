@@ -1,72 +1,71 @@
 document.addEventListener('DOMContentLoaded', function () {
+    
     const chatForm = document.getElementById('chat-form');
     const messagesDiv = document.getElementById('messages');
     const inputField = document.getElementById('message');
     const button = document.getElementById('button');
-    const span = document.getElementById('button-text')
+    const span = document.getElementById('button-text');
+    const faqItens = document.querySelectorAll('.faq-questions');
 
-    // reativa o botão e remove o efeito de loading
     function enableButton() {
         button.disabled = false;
         button.classList.remove('button-loading');
-        span.innerText = "➤"
+        span.innerText = "➤";
     }
 
+    function addMessage(text, isUser = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add(isUser ? 'user-message' : 'bot-message');
+        const sender = isUser ? 'Você' : 'StudentHub';
+        messageDiv.innerHTML = `<strong>${sender}:</strong> ${text}`;
+        messagesDiv.appendChild(messageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    async function sendMessageToBot(message) {
+        try {
+            const response = await fetch(CHATBOT_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': CSRF_TOKEN
+                },
+                body: JSON.stringify({ message })
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro na resposta do servidor');
+            }
+
+            const data = await response.json();
+            addMessage(data.answer || 'Desculpe, não entendi sua mensagem.');
+        } catch (error) {
+            console.error('Erro:', error);
+            addMessage('Ocorreu um erro ao processar sua mensagem.');
+        } finally {
+            enableButton();
+        }
+    }
 
     chatForm.addEventListener('submit', function (e) {
         e.preventDefault();
         const userMessage = inputField.value.trim();
-        if (userMessage === "") return;
+        if (!userMessage) return;
 
-        // Exibir a mensagem do usuário
-        const userDiv = document.createElement('div');
-        userDiv.classList.add('user-message');
-        userDiv.innerHTML = `<strong>Você:</strong> ${userMessage}`;
-        messagesDiv.appendChild(userDiv);
-
-        // Limpar o campo de entrada
+        addMessage(userMessage, true);
         inputField.value = '';
+        sendMessageToBot(userMessage);
+    });
 
-        // Enviar a mensagem para o servidor via AJAX
-        fetch(CHATBOT_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': CSRF_TOKEN
-            },
-            body: JSON.stringify({ message: userMessage })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erro na resposta do servidor');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.answer) {
-                const botDiv = document.createElement('div');
-                botDiv.classList.add('bot-message');
-                botDiv.innerHTML = `<strong>StudentHub:</strong> ${data.answer}`;
-                messagesDiv.appendChild(botDiv);
-                enableButton();
-            } else {
-                const errorDiv = document.createElement('div');
-                errorDiv.classList.add('bot-message');
-                errorDiv.innerHTML = `<strong>StudentHub:</strong> Desculpe, não entendi sua mensagem.`;
-                messagesDiv.appendChild(errorDiv);
-                enableButton();
-            }
+    faqItens.forEach(button => {
+        button.addEventListener('click', function (event) {
+            event.stopPropagation();
+            const clickedQuestion = event.target.textContent.trim();
+            
+            sendMessageToBot(clickedQuestion);
 
-            // Rolar para a última mensagem
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            const errorDiv = document.createElement('div');
-            errorDiv.classList.add('bot-message');
-            errorDiv.innerHTML = `<strong>Bot:</strong> Ocorreu um erro ao processar sua mensagem.`;
-            messagesDiv.appendChild(errorDiv);
-            enableButton();
+            this.classList.add('clicked');
+            setTimeout(() => this.classList.remove('clicked'), 300);
         });
     });
 });

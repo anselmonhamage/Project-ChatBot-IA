@@ -1,4 +1,4 @@
-{% extends 'base_index.html' %}
+{% extends 'base.html' %}
 {% block title %} {{ super() }} - Home {% endblock %}
 {% block content %}
 <header>
@@ -10,6 +10,17 @@
             <li><a href="{{ url_for('login') }}">Login</a></li>
         </ul>
     </nav>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-warning">
+            <ul class="flashes">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    {% endwith %}
 </header>
 <main>
     <div class="content">
@@ -29,7 +40,7 @@
         <a href="{{ url_for('signup') }}"><button>Signup</button></a>
     </div>
     <div class="app-showcase">
-        <img src="{{ url_for('static', filename='images/template.jpg') }}" alt="App Showcase" style="margin-right: 80px;">
+        <img src="{{ url_for('static', filename='images/home.jpg') }}" alt="App Showcase">
     </div>
 </main>  
 {% endblock %}
