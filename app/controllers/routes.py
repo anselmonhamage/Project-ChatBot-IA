@@ -167,9 +167,8 @@ def chatbot():
             try:
                 response = model.generate_content(f"Use o seguinte contexto {contexto} para responder aseguinte,\n Pergunta: {user_message}")
                 aux = response.text.strip()
-                answer = format_text(aux, option='plain')
+                answer = format_text(aux, option='html')
             except Exception as e:
-                print(f"Erro ao processar a resposta: {str(e)}")
                 answer = "Desculpe, ocorreu um erro ao processar sua solicitação."
 
         return jsonify({"answer": answer})

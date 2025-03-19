@@ -67,7 +67,6 @@ def restore_code_blocks(text, code_blocks):
 def format_paragraphs(text):
     
     def process_paragraph_content(content):
-        # Verifica se o conteúdo contém itens de lista
         if re.search(r'^\* .+$', content, re.MULTILINE):
             items = re.findall(r'^\* (.+?)$', content, re.MULTILINE)
             return '<ul>\n' + '\n'.join(f'<li>{item.strip()}</li>' for item in items) + '\n</ul>'
@@ -95,50 +94,39 @@ def format_paragraphs(text):
 
 def format_plain(text):
     
-    def format_list_item(text):
-        text = re.sub(r'\*\*(.*?)\*\*:', r'*\1*:', text)
-        text = re.sub(r'\*\*(.*?)\*\*', r'*\1*', text)
-        
-        if ':' in text:
-            title, content = text.split(': ', 1)
-            return f"{title}: {content.strip()}"
-        return text
+    text = re.sub(r'^#{1,6}\s+(.+)$', r'\1', text, flags=re.MULTILINE)
+    text = re.sub(r'\*\*(.+?)\*\*', r'*\1*', text)
+    text = re.sub(r'__(.+?)__', r'*\1*', text)
 
-    code_blocks = {}
-    def preserve_code(match):
-        placeholder = f"CODE_{len(code_blocks)}"
-        code_blocks[placeholder] = match.group(2)
-        return placeholder
-    
-    text = re.sub(r'```(\w*)\n(.*?)```', preserve_code, text, flags=re.DOTALL)
-    
-    replacements = [
-        (r'^([^•\n].*?)(?=\n•|\Z)', r'\1\n', re.MULTILINE),
-        
-        (r'^-\s*(.*?)$', r'• \1\n', re.MULTILINE),
-        (r'^\*\s*(.*?)$', r'• \1\n', re.MULTILINE),
-        (r'^\d+\.\s*(.*?)$', r'• \1\n', re.MULTILINE),
-    ]
-    
-    for pattern, replacement, flags in replacements:
-        text = re.sub(pattern, replacement, text, flags=flags)
-    
-    lines = text.split('\n')
-    formatted_lines = []
-    
-    for line in lines:
-        if line.strip():
-            if line.startswith('• '):
-                line = format_list_item(line.strip())
-                formatted_lines.extend([line, ''])
-            else:
-                formatted_lines.append(line)
-    
-    text = '\n'.join(formatted_lines)
-    
-    text = re.sub(r'\*\*(.*?)\*\*', r'*\1*', text)
-    text = re.sub(r'\s+\*', '*', text)
-    text = re.sub(r'\*\s+', '*', text)
-    text = re.sub(r'\n{3,}', '\n\n', text)
-    
+    text = re.sub(r'^\* (.+)$', r'• \1\n', text, flags=re.MULTILINE)
+    text = re.sub(r'^- (.+)$', r'• \1\n', text, flags=re.MULTILINE)
+    text = re.sub(r'^ {2}\* (.+)$', r'  • \1\n', text, flags=re.MULTILINE)
+    text = re.sub(r'^ {2}- (.+)$', r'  • \1\n', text, flags=re.MULTILINE)
+
+    text = re.sub(r'^(\d+)\. (.+)$', r'\1. \2\n', text, flags=re.MULTILINE)
+
+    code_blocks = []
+
+    def extract_code_blocks(match):
+        content = match.group(2)
+        lines = content.split('\n')
+
+        if len(lines) > 0 and not lines[0].startswith('    ') and re.match(r'^[a-zA-Z0-9_\-+.]+$', lines[0]):
+            lines = lines[1:]
+
+        index = len(code_blocks)
+        code_blocks.append('\n'.join(lines))
+
+        return f"_CODE_BLOCK{index}"
+
+    text = re.sub(r'(`{3,})(.+?)\1', extract_code_blocks, text, flags=re.DOTALL)
+    text = re.sub(r'\[(.+?)\]\((.+?)\)', r'\1: \2', text)
+    text = re.sub(r'`([^`]+)`', r'\1', text)
+
+    for i, block in enumerate(code_blocks):
+        text = text.replace(f"_CODE_BLOCK{i}", f"\n{block.strip()}\n")
+
+    text = re.sub(r'(\n• .+?)(?=(\n• )|(\n\d+\. )|(\n$))', r'\1\n', text, flags=re.MULTILINE)
+    text = re.sub(r'(\n\d+\. .+?)(?=(\n• )|(\n\d+\. )|(\n$))', r'\1\n', text, flags=re.MULTILINE)
+
     return text.strip()
