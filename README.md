@@ -12,7 +12,6 @@ A primeira coisa a fazer é clonar o repositório caso queira testar a aplicaç�
 
 ```bash
 $ git clone https://github.com/anselmonhamage/Project-ChatBot-IA.git
-
 $ cd Project-ChatBot-IA/
 ```
 
@@ -89,11 +88,11 @@ O banco de dados usado para o projecto, é o banco de dados MS SQL SERVER da Mic
 #### Exemplo:
 
 ```
-            server = os.environ.get("MSSQL_SERVER")
-            database = os.environ.get("MSSQL_DB")
-            driver = os.environ.get("MSSQL_DRIVER")
+server = os.environ.get("MSSQL_SERVER")
+database = os.environ.get("MSSQL_DB")
+driver = os.environ.get("MSSQL_DRIVER")
 
-            SQLALCHEMY_DATABASE_URI = f'mssql+pyodbc://{server}/{database}?driver={driver}'
+SQLALCHEMY_DATABASE_URI = f'mssql+pyodbc://{server}/{database}?driver={driver}'
 ```
 
 #### **NB:** O presente exemplo será modificado brevimente!
@@ -103,12 +102,12 @@ O banco de dados usado para o projecto, é o banco de dados MS SQL SERVER da Mic
 
 Tendo já feito toda configuração e terminado, vamos agora fazer as migrações para o banco de dados:
 
-#### Shell
+#### Comandos de Shell
 
-```
-    flask db init
-    flask db migrate -m "initial migration."-> apenas a primeira vez, as proximas serão $ flask db migrate
-    flask db upgrade
+```shell
+flask db init
+flask db migrate -m "initial migration."
+flask db upgrade
 ```
 
 
@@ -118,14 +117,14 @@ Chegou a tão esperada hora de executar o projecto!
 
 #### Shell do Linux
 
-```
-    $ python3 run.py runserver
+```bash
+$ python3 run.py runserver
 ```
 
 #### Prompt de Comando Windowns
 
-```
-    $ python run.py runserver
+```bash
+$ python run.py runserver
 ```
 
 ## Expôr o serviço na Internet, caso contrário pode testar com ngrok
@@ -134,14 +133,14 @@ Chegou a tão esperada hora de executar o projecto!
 
 ### Definir a porta para expôr um serviço pelo ngrok
 
-```
-    $ ngrok http <porta>
+```bash
+$ ngrok http <porta>
 ```
 
 ### Definir token de autenticação para o ngrok
 
-```
-    $ ngrok authtoken NGROK_AUTHTOKEN
+```bash
+$ ngrok authtoken NGROK_AUTHTOKEN
 ```
 
 ### FIM
