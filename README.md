@@ -140,7 +140,7 @@ $ ngrok http <porta>
 ### Definir token de autenticação para o ngrok
 
 ```bash
-$ ngrok authtoken NGROK_AUTHTOKEN
+$ ngrok authtoken <NGROK_AUTHTOKEN>
 ```
 
 ### FIM
