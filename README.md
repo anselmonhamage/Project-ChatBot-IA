@@ -11,8 +11,8 @@ Este projeto será disponibilizado de forma que todos desenvolvedores possam con
 A primeira coisa a fazer é clonar o repositório caso queira testar a aplicação!
 
 ```bash
-$ git clone https://github.com/anselmonhamage/Project-ChatBot-IA.git
-$ cd Project-ChatBot-IA/
+git clone https://github.com/anselmonhamage/Project-ChatBot-IA.git
+cd Project-ChatBot-IA/
 ```
 
 ## Preparação do Ambiente de Desenvolvimento e Instalação de Dependências
@@ -24,36 +24,36 @@ Para tal vamos criar um ambiente virtual usando o virtualenv no python na raiz d
 ### Criando e Ativando o Ambiente Virtual
 
 ```bash
-$ python -m venv venv
+python -m venv venv
 ```
 
 ### Activação do ambiente virtual venv
 
 #### Shell do Linux
 ```bash
-$ source venv/bin/activate
+source venv/bin/activate
 ```
 
 #### Prompt de Comando(CMD) Windowns
 ```bash
-$ .\venv\Scripts\activate
+.\venv\Scripts\activate
 ```
 
 ### Dectivação do ambiente virtual venv
 ```bash
-$ deactivate
+deactivate
 ```
 
 ## Instalação das Dependências do projecto
 
 #### Shell do Linux
 ```bash
-$ pip3 install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 #### Prompt de Comando Windowns
 ```bash
-$ pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 
@@ -118,13 +118,13 @@ Chegou a tão esperada hora de executar o projecto!
 #### Shell do Linux
 
 ```bash
-$ python3 run.py runserver
+python3 run.py runserver
 ```
 
 #### Prompt de Comando Windowns
 
 ```bash
-$ python run.py runserver
+python run.py runserver
 ```
 
 ## Expôr o serviço na Internet, caso contrário pode testar com ngrok
@@ -134,13 +134,13 @@ $ python run.py runserver
 ### Definir a porta para expôr um serviço pelo ngrok
 
 ```bash
-$ ngrok http <porta>
+ngrok http <porta>
 ```
 
 ### Definir token de autenticação para o ngrok
 
 ```bash
-$ ngrok authtoken <NGROK_AUTHTOKEN>
+ngrok authtoken <NGROK_AUTHTOKEN>
 ```
 
 ### FIM
