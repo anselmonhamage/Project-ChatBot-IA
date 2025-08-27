@@ -8,6 +8,7 @@ from twilio.twiml.messaging_response import MessagingResponse
 from app.services.twilio_service import client, to_whatsapp_number, from_whatsapp_number
 from app.services.format_text import format_text
 from app.services.chatbot_genai import model
+import app.services.ollama_service as ollama_service
 
 from app.models.tables import User, Question
 from app.models.forms import LoginForm, Cadastro, UpdateProfileForm, QuestionForm
@@ -33,7 +34,7 @@ def signup():
     user = User.query.filter_by(email=form.email.data).first()
 
     if user:
-        flash("Esse usuário já existe!")
+        flash("Esse utilizador já existe!")
         return redirect(url_for('signup'))
 
     if form.validate_on_submit():
@@ -182,6 +183,48 @@ def responder_mensagem(msg):
         from_=from_whatsapp_number, 
         to=to_whatsapp_number
     )
+
+def format_text(text, option='html'):
+    """Função para formatar texto"""
+    if option == 'html':
+        text = text.replace('\n', '<br>')
+    return text
+
+@app.route("/chatbot/ollama", methods=["GET", "POST"])
+@login_required
+def ollama_chatbot():
+    if request.method == "POST":
+        data = request.get_json()
+        user_message = data.get("message", "").strip()
+        
+        if not user_message:
+            return jsonify({"error": "Mensagem vazia."}), 400
+
+        if not ollama_service.check_ollama_status():
+            return jsonify({"error": "Serviço de IA indisponível."}), 503
+      
+        try:
+            response = ollama_service.get_chatbot_response(user_message)
+            answer = format_text(response, option='html')   
+        except Exception as e:
+            print(f"Erro no chatbot: {e}")
+            answer = "Desculpe, ocorreu um erro ao processar sua solicitação."
+
+        return jsonify({"answer": answer})
+
+    return render_template("chatbot.html")
+
+
+@app.route("/chatbot/ollama/status", methods=["GET"])
+def chatbot_status():
+    """Verifica status do Ollama"""
+    status = ollama_service.check_ollama_status()
+    models = ollama_service.list_models() if status else []
+    
+    return jsonify({
+        "ollama_running": status,
+        "available_models": [model.get('name', '') for model in models]
+    })
 
 
 @app.route('/whatsapp', methods=['GET', 'POST'])

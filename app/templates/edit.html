@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block title %} {{ super() }} - Editar Usuário {% endblock %}
+{% block title %} {{ super() }} - Editar utilizador {% endblock %}
 {% block content %}
 <div class="base-container">
     <img src="{{ url_for('static', filename='images/profilw.png') }}" alt="" class="profile">
-    <h1>Editar <span>Usuário</span></h1>
+    <h1>Editar <span>utilizador</span></h1>
     {% with messages = get_flashed_messages() %}
         {% if messages %}
         <div class="alert alert-warning">
