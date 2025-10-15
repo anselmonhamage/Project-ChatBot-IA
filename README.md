@@ -251,36 +251,36 @@ Para resolver essa equação do segundo grau, use a fórmula de Bhaskara:
 Project-ChatBot-IA/
 ├── app/
 │   ├── __init__.py
-│   ├── auth/                   # Decorators de autenticação
+│   ├── auth/                         # Decorators de autenticação
 │   ├── controllers/
-│   │   └── routes.py           # Rotas principais da aplicação
+│   │   └── routes.py                 # Rotas principais da aplicação
 │   ├── models/
-│   │   ├── tables.py           # Modelos SQLAlchemy (User, ChatHistory)
-│   │   └── forms.py            # Formulários Flask-WTF
+│   │   ├── tables.py                 # Modelos SQLAlchemy (User, ChatHistory)
+│   │   └── forms.py                  # Formulários Flask-WTF
 │   ├── services/
-│   │   ├── unified_chatbot.py  # Serviço unificado (Gemini + Ollama)
-│   │   ├── twilio_service.py   # Integração WhatsApp
-│   │   ├── whatsapp_formatter.py # Formatação para WhatsApp
-│   │   ├── pix2latex_service.py # Processa imagens
-│   │   └── chat_history_service.py # Histórico de conversas
+│   │   ├── unified_chatbot.py        # Serviço unificado (Gemini + Ollama)
+│   │   ├── twilio_service.py         # Integração WhatsApp
+│   │   ├── whatsapp_formatter.py     # Formatação para WhatsApp
+│   │   ├── pix2latex_service.py      # Processa imagens
+│   │   └── chat_history_service.py   # Histórico de conversas
 │   ├── static/
-│   │   ├── css/                # Estilos CSS
-│   │   ├── js/                 # JavaScript (chatbot.js, edit_profile.js)
-│   │   ├── images/             # Imagens estáticas
-│   │   └── uploads/            # Uploads de usuários
+│   │   ├── css/                      # Estilos CSS
+│   │   ├── js/                       # JavaScript (chatbot.js, edit_profile.js)
+│   │   ├── images/                   # Imagens estáticas
+│   │   └── uploads/                  # Uploads de usuários
 │   └── templates/
-│       ├── base.html           # Template base
-│       ├── chatbot.html        # Interface do chatbot
-│       ├── edit.html           # Edição de perfil
-│       ├── login.html          # Login
-│       ├── signup.html         # Registro
-│       └── index.html          # Página inicial
-├── migrations/              # Migrações de banco de dados
-├── instance/                # Banco SQLite
-├── config.py                # Configurações Flask
-├── run.py                   # Ponto de entrada
-├── requirements.txt         # Dependências Python
-├── .env.example             # Exemplo de configuração
+│       ├── base.html                 # Template base
+│       ├── chatbot.html              # Interface do chatbot
+│       ├── edit.html                 # Edição de perfil
+│       ├── login.html                # Login
+│       ├── signup.html               # Registro
+│       └── index.html                # Página inicial
+├── migrations/                       # Migrações de banco de dados
+├── instance/                         # Banco SQLite
+├── config.py                         # Configurações Flask
+├── run.py                            # Ponto de entrada
+├── requirements.txt                  # Dependências Python
+├── .env.example                      # Exemplo de configuração
 └── README.md                
 ```
 
@@ -355,7 +355,3 @@ Para suporte, entre em contato através de:
 - [ ] API REST completa
 - [ ] Dashboard administrativo
 - [ ] MCP (Model Context Protocol)
-
-## 📚 Migração
-
-Se você está atualizando de uma versão anterior, consulte [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) para instruções de migração do banco de dados.
