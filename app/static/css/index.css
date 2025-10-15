@@ -1,0 +1,930 @@
+@import url('common.css');
+
+/* Variáveis específicas da página inicial */
+:root {
+    --background-gradient: linear-gradient(135deg, #FFFFFF 0%, #F5F8FA 50%, #E8EFF4 100%);
+    --gradient-bg: linear-gradient(135deg, #4180AB 0%, #8AB3CF 100%);
+}
+
+/* Estilos específicos para a página inicial */
+body {
+    font-family: var(--font-family);
+    background: var(--background-gradient);
+    background-size: 300% 300%;
+    color: var(--text-dark);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    animation: gradientAnimation 15s ease infinite;
+    overflow-x: hidden;
+}
+
+/* Animações */
+@keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Footer */
+.footer {
+    background: linear-gradient(135deg, rgba(235, 242, 247, 0.98) 0%, rgba(220, 230, 240, 0.98) 100%);
+    padding: 3rem 2rem 1.5rem;
+    position: relative;
+    z-index: 10;
+    color: var(--text-dark);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 2px solid rgba(65, 128, 171, 0.2);
+    box-shadow: 0 -4px 20px rgba(65, 128, 171, 0.08);
+}
+
+.footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.footer-sections {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2.5rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(65, 128, 171, 0.15);
+}
+
+.footer-section h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 1rem;
+    letter-spacing: 0.02em;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.footer-section p {
+    margin: 0.6rem 0;
+    font-size: 0.95rem;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    line-height: 1.6;
+}
+
+.footer-section p i {
+    color: var(--primary);
+    width: 20px;
+    font-size: 1rem;
+}
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.75rem;
+}
+
+.social-links a {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1.5px solid rgba(65, 128, 171, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(65, 128, 171, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.social-links a:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(65, 128, 171, 0.3);
+    border-color: var(--primary);
+}
+
+.footer-bottom {
+    text-align: center;
+}
+
+.footer-bottom p {
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+    color: #4a5568;
+    line-height: 1.6;
+}
+
+.footer-bottom strong {
+    color: var(--primary);
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+/* Header moderno com glassmorphism */
+header {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(235, 242, 247, 0.98) 100%);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-bottom: 2px solid rgba(65, 128, 171, 0.15);
+    padding: 1rem 0;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px rgba(65, 128, 171, 0.12), 
+                0 1px 3px rgba(0, 0, 0, 0.05),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.header-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo h1 {
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    font-weight: 700;
+    color: var(--text-dark);
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8),
+                 0 2px 4px rgba(0, 0, 0, 0.05);
+    letter-spacing: -0.02em;
+}
+
+.logo h1 span {
+    color: var(--primary);
+    text-shadow: 0 0 30px rgba(65, 128, 171, 0.6),
+                 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+}
+
+nav a {
+    text-decoration: none;
+    color: var(--text-dark);
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 2rem;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1.5px solid rgba(65, 128, 171, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 8px rgba(65, 128, 171, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+nav a:hover {
+    background: rgba(65, 128, 171, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(65, 128, 171, 0.3);
+    border-color: var(--primary);
+}
+
+nav a:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(65, 128, 171, 0.2);
+}
+
+/* Main content - CORRIGIDO */
+main {
+    margin-top: 6rem;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+}
+
+.main-container {
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mobile-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+}
+
+/* Content section */
+.content {
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+/* Carousel moderno */
+.carousel-container {
+    width: 100%;
+    max-width: 600px;
+    height: 22rem;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    margin-top: 3.5rem;
+    position: relative;
+    border-radius: 1.5rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 2px solid rgba(65, 128, 171, 0.25);
+    box-shadow: 0 8px 20px rgba(65, 128, 171, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.carousel {
+    display: flex;
+    height: 100%;
+    animation: slideCarousel 15s infinite ease-in-out;
+}
+
+.carousel-item {
+    min-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    gap: 1.75rem;
+}
+
+.carousel-item h1 {
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1.3;
+    margin: 0;
+}
+
+/* Logo moderno no carrossel */
+.carousel-logo {
+    width: 140px;
+    height: 140px;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    border: 3px solid var(--primary);
+    box-shadow: 0 8px 25px rgba(65, 128, 171, 0.4),
+                inset 0 2px 0 rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    flex-shrink: 0;
+    padding: 0.75rem;
+}
+
+.carousel-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+}
+
+@keyframes slideCarousel {
+    0%, 18% { transform: translateX(0); }
+    20%, 38% { transform: translateX(-100%); }
+    40%, 58% { transform: translateX(-200%); }
+    60%, 78% { transform: translateX(-300%); }
+    80%, 98% { transform: translateX(-400%); }
+    100% { transform: translateX(0); }
+}
+
+.content p {
+    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+    color: var(--text-dark);
+    margin: 2rem 0;
+    line-height: 1.7;
+    font-weight: 400;
+}
+
+.content p span {
+    color: var(--primary);
+    font-weight: 700;
+    text-shadow: 0 0 15px rgba(65, 128, 171, 0.4);
+}
+
+/* Botão CTA moderno */
+.cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1.25rem 2.5rem;
+    background: var(--primary);
+    color: var(--text-white);
+    text-decoration: none;
+    border-radius: 3rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    border: 1px solid var(--glass-border);
+    align-self: flex-start;
+}
+
+.cta-button:hover {
+    background: #5090BB;
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 10px 30px rgba(65, 128, 171, 0.4);
+    color: rgba(255, 255, 255, 1);
+}
+
+.cta-button:active {
+    transform: translateY(0);
+}
+
+/* App showcase */
+.app-showcase {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.showcase-wrapper {
+    position: relative;
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.showcase-image {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    border-radius: 2rem;
+    box-shadow: 
+        0 25px 60px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: float 8s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-10px) rotate(1deg); }
+    50% { transform: translateY(-20px) rotate(0deg); }
+    75% { transform: translateY(-10px) rotate(-1deg); }
+}
+
+.showcase-image:hover {
+    transform: scale(1.05) translateY(-10px);
+    box-shadow: 
+        0 35px 80px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+/* Efeitos decorativos */
+.floating-elements {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.floating-element {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    animation: floatElement 20s infinite linear;
+}
+
+.floating-element:nth-child(1) {
+    width: 60px;
+    height: 60px;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.floating-element:nth-child(2) {
+    width: 40px;
+    height: 40px;
+    left: 80%;
+    animation-delay: 7s;
+}
+
+.floating-element:nth-child(3) {
+    width: 80px;
+    height: 80px;
+    left: 60%;
+    animation-delay: 14s;
+}
+
+@keyframes floatElement {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Tablets grandes */
+@media (max-width: 1024px) {
+    .mobile-container {
+        gap: 3rem;
+        max-width: 900px;
+    }
+    
+    .main-container {
+        padding: 0 1.5rem;
+    }
+    
+    .header-container {
+        padding: 0 1.5rem;
+    }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+    header {
+        padding: 0.75rem 0;
+    }
+
+    .header-container {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 0 1rem;
+    }
+
+    nav ul {
+        gap: 0.5rem;
+    }
+
+    nav a {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+
+    main {
+        margin-top: 8rem;
+        padding: 1.5rem 0;
+    }
+
+    .main-container {
+        padding: 0 1rem;
+    }
+    
+    .mobile-container {
+        display: flex;
+        flex-direction: column;
+        gap: 2.5rem;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .content {
+        order: 1;
+        width: 100%;
+        max-width: 500px;
+        align-items: center;
+    }
+    
+    .app-showcase {
+        order: 2;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .carousel-container {
+        height: 18rem;
+        margin-bottom: 2rem;
+        margin-top: 2.5rem;
+        max-width: 100%;
+    }
+    
+    .carousel-logo {
+        width: 110px;
+        height: 110px;
+        border-radius: 1rem;
+        border-width: 3px;
+        padding: 0.6rem;
+    }
+
+    .content p {
+        margin: 1.5rem 0;
+    }
+
+    .showcase-image {
+        max-width: 350px;
+    }
+
+    .cta-button {
+        align-self: center;
+    }
+    
+    /* Footer responsivo tablet */
+    .footer {
+        padding: 2rem 1.5rem 1rem;
+    }
+    
+    .footer-sections {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    
+    .footer-section p {
+        justify-content: center;
+    }
+    
+    .social-links {
+        justify-content: center;
+    }
+    
+    .footer-bottom p {
+        font-size: 0.85rem;
+    }
+}
+
+/* Smartphones */
+@media (max-width: 480px) {
+    .header-container {
+        padding: 0 0.75rem;
+    }
+
+    nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    nav a {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    main {
+        margin-top: 9rem;
+        padding: 1rem 0;
+    }
+
+    .main-container {
+        padding: 0 0.75rem;
+    }
+    
+    .mobile-container {
+        gap: 2rem;
+    }
+    
+    .content {
+        max-width: 100%;
+    }
+    
+    .app-showcase {
+        max-width: 100%;
+    }
+
+    .carousel-container {
+        height: 16rem;
+        margin-bottom: 1.5rem;
+        margin-top: 1.5rem;
+    }
+    
+    .carousel-logo {
+        width: 95px;
+        height: 95px;
+        border-radius: 0.85rem;
+        border-width: 2.5px;
+        padding: 0.5rem;
+    }
+
+    .content p {
+        margin: 1rem 0;
+    }
+
+    .cta-button {
+        padding: 1rem 2rem;
+        font-size: 1rem;
+    }
+
+    .showcase-image {
+        max-width: 280px;
+        border-radius: 1.5rem;
+    }
+    
+    /* Footer responsivo smartphone */
+    .footer {
+        padding: 1.5rem 1rem 1rem;
+    }
+    
+    .footer-sections {
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .footer-section h4 {
+        font-size: 1rem;
+    }
+    
+    .footer-section p {
+        font-size: 0.9rem;
+    }
+    
+    .social-links a {
+        width: 38px;
+        height: 38px;
+        font-size: 1.1rem;
+    }
+    
+    .footer-bottom p {
+        font-size: 0.8rem;
+    }
+}
+
+/* Telas muito pequenas */
+@media (max-width: 320px) {
+    .header-container {
+        padding: 0 0.5rem;
+    }
+
+    .main-container {
+        padding: 0 0.5rem;
+    }
+    
+    .mobile-container {
+        gap: 1.5rem;
+    }
+
+    .carousel-container {
+        height: 13rem;
+        margin-top: 1rem;
+    }
+    
+    .carousel-logo {
+        width: 80px;
+        height: 80px;
+        border-radius: 0.75rem;
+        border-width: 2px;
+        padding: 0.4rem;
+    }
+
+    .cta-button {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.95rem;
+    }
+
+    .showcase-image {
+        max-width: 250px;
+    }
+    
+    /* Footer responsivo telas muito pequenas */
+    .footer {
+        padding: 1.25rem 0.75rem 0.75rem;
+    }
+    
+    .footer-sections {
+        gap: 1.25rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .footer-section h4 {
+        font-size: 0.95rem;
+    }
+    
+    .footer-section p {
+        font-size: 0.85rem;
+    }
+    
+    .social-links a {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+    
+    .footer-bottom p {
+        font-size: 0.75rem;
+    }
+}
+
+/* Otimizações para iPhone */
+@media (max-width: 414px) and (-webkit-min-device-pixel-ratio: 2) {
+    .logo h1 {
+        font-size: 1.6rem;
+    }
+    
+    .showcase-image {
+        max-width: 300px;
+    }
+}
+
+/* Otimizações para iPad */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .main-container {
+        grid-template-columns: 1fr 0.8fr;
+    }
+    
+    .showcase-image {
+        max-width: 400px;
+    }
+}
+
+/* Modo paisagem para dispositivos móveis */
+@media (max-height: 600px) and (orientation: landscape) {
+    main {
+        margin-top: 4rem;
+        padding: 0.5rem;
+    }
+    
+    .carousel-container {
+        height: auto;
+        min-height: 180px;
+        max-height: 65vh;
+        margin: 0.5rem auto 1rem;
+        padding: 0;
+    }
+    
+    .carousel-item {
+        padding: 0.75rem 1rem;
+        gap: 1rem;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        min-height: 180px;
+    }
+    
+    .carousel-item h1 {
+        font-size: clamp(1rem, 3vw, 1.3rem);
+        text-align: left;
+        flex: 1;
+        line-height: 1.2;
+    }
+    
+    .carousel-logo {
+        width: 75px;
+        height: 75px;
+        flex-shrink: 0;
+        border-radius: 0.75rem;
+        border-width: 2px;
+        padding: 0.4rem;
+    }
+    
+    .main-container {
+        gap: 0.75rem;
+        padding: 0.5rem;
+        grid-template-columns: 1fr;
+    }
+    
+    .mobile-container {
+        gap: 0.75rem;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .content {
+        max-width: 55%;
+        order: 1;
+    }
+    
+    .content p {
+        margin: 0.5rem 0;
+        font-size: 0.95rem;
+        line-height: 1.4;
+    }
+    
+    .app-showcase {
+        max-width: 40%;
+        order: 2;
+    }
+    
+    .showcase-image {
+        max-width: 250px;
+    }
+    
+    .cta-button {
+        padding: 0.65rem 1.5rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Modo paisagem celulares pequenos */
+@media (max-height: 450px) and (orientation: landscape) {
+    .carousel-container {
+        min-height: 150px;
+        max-height: 60vh;
+    }
+    
+    .carousel-item {
+        padding: 0.5rem 0.75rem;
+        min-height: 150px;
+    }
+    
+    .carousel-item h1 {
+        font-size: 1rem;
+    }
+    
+    .carousel-logo {
+        width: 60px;
+        height: 60px;
+        padding: 0.3rem;
+    }
+    
+    .content p {
+        font-size: 0.85rem;
+    }
+}
+
+/* Dispositivos grandes (desktops, 992px e acima) */
+@media (min-width: 992px) {
+    .mobile-container {
+        max-width: 1000px;
+    }
+}
+
+/* Dispositivos extra grandes (desktops grandes, 1200px e acima) */
+@media (min-width: 1200px) {
+    .mobile-container {
+        max-width: 1140px;
+    }
+    
+    .showcase-image {
+        max-width: 650px;
+    }
+    
+    .carousel-container {
+        height: 25rem;
+        margin-top: 4rem;
+    }
+    
+    .carousel-logo {
+        width: 150px;
+        height: 150px;
+        border-radius: 1.5rem;
+        padding: 0.85rem;
+    }
+}
+
+/* Dispositivos extra extra grandes (monitores muito grandes, 1400px e acima) */
+@media (min-width: 1400px) {
+    .mobile-container {
+        max-width: 1320px;
+        gap: 4rem;
+    }
+    
+    .showcase-image {
+        max-width: 750px;
+    }
+}
+
+/* Melhorias de performance */
+@media (prefers-reduced-motion: reduce) {
+    .carousel {
+        animation: none;
+    }
+    
+    .floating-element {
+        animation: none;
+    }
+    
+    .showcase-image {
+        animation: none;
+    }
+}

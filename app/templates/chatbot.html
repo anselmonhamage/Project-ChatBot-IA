@@ -1,82 +1,197 @@
-<!DOCTYPE html> 
-<html lang="pt">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HelpDesk - Chatbot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>StudentHub - Chatbot</title>
+    
     <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
 </head>
 <body>
-    <div class="container">
-
-        <header>
-            <div class="logo">
-                <h1>Student<span>Hub</span></h1>
+    <header class="minimal-header">
+        <div class="user-profile-section">
+            <div class="user-avatar" id="userAvatar">
+                <i class="fas fa-user"></i>
             </div>
-            <nav>
-                <ul>
-                    <li><a href="{{ url_for('logout') }}"><i class="fa fa-sign-out-alt"></i> Logout</a></li>
-                    <li><a href="{{ url_for('update_profile') }}"><i class="fa fa-user-edit"></i> Atualizar Perfil</a></li>
-                </ul>
-            </nav>
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                <div class="alert alert-warning">
-                    <ul class="flashes">
-                    {% for message in messages %}
-                        <li>{{ message }}</li>
-                    {% endfor %}
-                    </ul>
+            <span class="user-name-header" id="userNameHeader">{{ current_user.name.split()[0] }}</span>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('update_profile') }}" class="header-btn">
+                <i class="fas fa-user-edit"></i>
+                <span>Perfil</span>
+            </a>
+            <a href="{{ url_for('logout') }}" class="header-btn logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sair</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="chat-main">
+        <div class="model-selector-container">
+            <div class="selector-group" title="Escolha o tipo de serviço">
+                <label for="serviceToggle" class="model-label">
+                    <i class="fas fa-server"></i>
+                    <span>Serviço</span>
+                </label>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="serviceToggle" class="toggle-input">
+                    <label for="serviceToggle" class="toggle-label">
+                        <span class="toggle-text online">☁️ Online</span>
+                        <span class="toggle-text local">🏠 Local</span>
+                    </label>
                 </div>
-                {% endif %}
-            {% endwith %}
-        </header>
+            </div>
+            
+            <div class="selector-group ollama-url-group" id="ollamaUrlGroup" style="display: none;">
+                <label for="ollamaUrlInput" class="model-label">
+                    <i class="fas fa-link"></i>
+                    <span>URL Ollama</span>
+                </label>
+                <input 
+                    type="text" 
+                    id="ollamaUrlInput" 
+                    class="model-select" 
+                    placeholder="http://localhost:11434"
+                    value="http://localhost:11434"
+                    title="URL do servidor Ollama local"
+                >
+                <button type="button" id="connectOllamaBtn" class="connect-btn" title="Conectar e carregar modelos">
+                    <i class="fas fa-plug"></i>
+                </button>
+            </div>
+            
+            <div class="selector-group" title="Selecione o modelo de IA">
+                <label for="modelSelect" class="model-label">
+                    <i class="fas fa-robot"></i>
+                    <span>Modelo</span>
+                </label>
+                <select id="modelSelect" class="model-select">
+                    {% if available_models and available_models|length > 0 %}
+                        {% for key, model in available_models.items() %}
+                            {% if model.type == 'online' %}
+                            <option value="{{ key }}" data-type="{{ model.type }}" {% if key == 'gemini' %}selected{% endif %}>
+                                {{ model.name }}
+                            </option>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <option value="gemini" data-type="online" selected>Gemini 2.0 Flash</option>
+                    {% endif %}
+                </select>
+            </div>
+        </div>
 
-        <main>
+        <div class="greeting-section">
+            <h1 class="greeting-text">
+                Bem vindo, <span class="user-name">{{ current_user.name.split()[0] if current_user.is_authenticated else 'Estudante' }}</span> 
+                <span class="wave-emoji">👋</span>
+            </h1>
+        </div>
 
-            <section class="chat-section">
-                <h1>Simplificando a<span> busca de informação</span> com <span>estilo</span></h1>
-                <br>
-                <h3 class="FAQ">Perguntas Frequentes</h3>
-                <div class="faq-questions">
-                    <button class="faq-button">Como posso usar sistema fácil e rápido do HelpDesk?</button>
-                    <button class="faq-button">Quais são os requisitos para fazer uso do Sistema?</button>
-                    <button class="faq-button">Qual é o contacto do HelpDesk?</button>
-                    <button class="faq-button">Dê-me dicas de Estudos?</button>   
-                </div>
-            </section>
+        <div class="chat-messages-container" id="chatMessagesContainer" style="display: none;">
+            <div id="chat-messages" class="chat-messages"></div>
+            <button id="scrollToBottomBtn" class="scroll-to-bottom-btn" title="Ir para o final">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
 
-            <section class="chat-section">
-                <div id="messages" class="messages">
-                    <div class="bot-message">
-                        <strong>StudentHub:</strong> Olá! Como posso ajudá-lo hoje?
-                    </div>
-                </div>
-            </section>
-
-            <form action="" method="post" id="chat-form" class="chat-form">
-                <div class="input-container">
-                    <div class="chat-box">
-                        <input type="text" id="message" placeholder="Pergunte aqui" />
-                        <button type="submit" class="button" id="button">
-                            <span class="button-text" id="button-text">➤</span>
-                            <span class="loading-spinner"></span>
-                        </button>
-                    </div>
+        <div class="input-section">
+            <form id="chat-form" class="chat-form" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                
+                <div class="input-wrapper">
+                    <button type="button" class="attach-btn" onclick="document.getElementById('fileInput').click()" title="Anexar arquivo">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <input type="file" id="fileInput" name="file" accept="image/*,.pdf,.txt,.doc,.docx" style="display: none;">
+                    
+                    <input 
+                        type="text" 
+                        id="message-input" 
+                        name="message" 
+                        class="message-input" 
+                        placeholder="Como posso ajudar?" 
+                        autocomplete="off"
+                        required
+                    >
+                    
+                    <button type="submit" class="send-btn" title="Enviar mensagem">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
                 </div>
             </form>
+            
+            <div class="action-icons">
+                <button class="action-icon" title="Matemática" onclick="insertMathTemplate()">
+                    <i class="fas fa-calculator"></i>
+                </button>
+                <button class="action-icon" title="Upload de imagem" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-image"></i>
+                </button>
+                <button class="action-icon" title="Código" onclick="insertCodeTemplate()">
+                    <i class="fas fa-code"></i>
+                </button>
+            </div>
+        </div>
+    </main>
 
-        </main>
-
+    <!-- Modal de Preview e Crop de Imagem -->
+    <div id="imagePreviewModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Visualizar e Ajustar Imagem</h3>
+                <button type="button" class="modal-close-btn" onclick="closeImagePreview()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="image-preview-container">
+                    <img id="previewImage" src="" alt="Preview">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="modal-btn cancel-btn" onclick="closeImagePreview()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button type="button" class="modal-btn rotate-btn" onclick="rotateImage(-90)">
+                    <i class="fas fa-undo"></i>
+                </button>
+                <button type="button" class="modal-btn rotate-btn" onclick="rotateImage(90)">
+                    <i class="fas fa-redo"></i>
+                </button>
+                <button type="button" class="modal-btn confirm-btn" onclick="confirmCroppedImage()">
+                    <i class="fas fa-check"></i> Confirmar
+                </button>
+            </div>
+        </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+    
     <script>
-        const CHATBOT_URL = "{{ url_for('ollama_chatbot') }}";
-        const CSRF_TOKEN = "{{ csrf_token() }}";
+        window.APP_URLS = {
+            chatbot: '{{ url_for("chatbot") }}',
+            userProfile: '{{ url_for("get_user_profile") }}'
+        };
+        
+        window.CSRF_TOKEN = '{{ csrf_token() }}';
     </script>
-
+    
     <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

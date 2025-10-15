@@ -1,24 +1,45 @@
-from flask import render_template, redirect, url_for, flash, request, jsonify
+import os
+from flask import render_template, redirect, url_for, flash, request, jsonify, send_from_directory
 from flask_login import login_user, logout_user, login_required, current_user
 from app import app, db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import csrf
-from twilio.twiml.messaging_response import MessagingResponse
 
-from app.services.twilio_service import client, to_whatsapp_number, from_whatsapp_number
-from app.services.format_text import format_text
-from app.services.chatbot_genai import model
-import app.services.ollama_service as ollama_service
+from app.services.unified_chatbot import generate_response, get_available_models
+from app.services.pix2latex_service import process_image, get_service_status
+from app.services.chat_history_service import chat_history_service
+from app.services.whatsapp_formatter import format_for_whatsapp
 
-from app.models.tables import User, Question
-from app.models.forms import LoginForm, Cadastro, UpdateProfileForm, QuestionForm
+from app.models.tables import User
+from app.models.forms import LoginForm, Cadastro, UpdateProfileForm
+import base64
 
 from app.auth.decorators import auth_role
+
+try:
+    from twilio.twiml.messaging_response import MessagingResponse
+    from app.services.twilio_service import client, to_whatsapp_number, from_whatsapp_number
+    TWILIO_AVAILABLE = True
+except ImportError:
+    TWILIO_AVAILABLE = False
 
 
 @login_manager.user_loader
 def load_user(id):
     return User.query.filter_by(id=id).first()
+
+
+@app.route('/favicon.ico')
+def favicon():
+    """Rota para servir favicon ou retornar 204 se não existir"""
+    try:
+        return send_from_directory(
+            os.path.join(app.root_path, 'static'),
+            'favicon.ico',
+            mimetype='image/vnd.microsoft.icon'
+        )
+    except:
+        return '', 204
 
 
 @app.route("/")
@@ -80,6 +101,18 @@ def logout():
     return redirect(url_for("index"))
 
 
+@app.route('/user/profile', methods=['GET'])
+@login_required
+def get_user_profile():
+    """Retorna dados do perfil do usuário incluindo imagem"""
+    return jsonify({
+        "name": current_user.name,
+        "email": current_user.email,
+        "tel": current_user.tel,
+        "profile_image": current_user.profile_image
+    })
+
+
 @app.route("/profile/update", methods=['GET', 'POST'])
 @login_required
 def update_profile():
@@ -88,6 +121,12 @@ def update_profile():
         current_user.name = form.name.data
         current_user.email = form.email.data
         current_user.tel = form.tel.data
+        
+        if form.profile_image.data:
+            image_file = form.profile_image.data
+            image_data = image_file.read()
+            current_user.profile_image = base64.b64encode(image_data).decode('utf-8')
+        
         db.session.commit()
         flash("Seu perfil foi atualizado com sucesso!", "success")
         return redirect(url_for('chatbot'))
@@ -120,139 +159,253 @@ def delete_profile():
     return redirect(url_for('index'))
 
 
-@app.route("/add/question", methods=['GET', 'POST'])
+@app.route("/chat/history", methods=["GET"])
 @login_required
-@auth_role("admin")
-def add_question():
-    form = QuestionForm()
-    if request.method == 'POST':
-        question_text = form.question_text.data
-        answer = form.answer.data
-        if not question_text or not answer:
-            flash("Ambos campos de questão e resposta são obrigatórios!", "warning")
-            return redirect(url_for('add_question'))
-        new_question = Question(
-            question_text=question_text,
-            answer=answer,
-            user_id=current_user.id
-        )
-
-        db.session.add(new_question)
-        db.session.commit()
-        flash("Nova questão adicionada com sucesso!", "success")
-        return redirect(url_for('chatbot'))
+def get_chat_history():
+    """Retorna histórico de chat do utilizador"""
+    limit = request.args.get('limit', 50, type=int)
+    session_id = request.args.get('session_id', None)
     
-    return render_template('add_question.html', form=form)
-
-
-@app.route("/chatbot", methods=["GET", "POST"])
-@login_required
-def chatbot():
-    if request.method == "POST":
-        data = request.get_json()
-        user_message = data.get("message", "").strip()
-        if not user_message:
-            return jsonify({"error": "Mensagem vazia."}), 400
-
-        similar_questions = Question.query.filter(Question.question_text.ilike(f"%{user_message}%")).all()
-
-        if similar_questions:
-            answer = similar_questions[0].answer
-        else:
-            all_questions = Question.query.all()
-
-            contexto = ""
-            for question in all_questions:
-                contexto += f"Pergunta: {question.question_text}\n Resposta: {question.answer}\n"
-
-            try:
-                response = model.generate_content(f"Use o seguinte contexto {contexto} para responder aseguinte,\n Pergunta: {user_message}")
-                aux = response.text.strip()
-                answer = format_text(aux, option='html')
-            except Exception as e:
-                answer = "Desculpe, ocorreu um erro ao processar sua solicitação."
-
-        return jsonify({"answer": answer})
-
-    return render_template("chatbot.html")
-
-
-def responder_mensagem(msg):
-    client.messages.create(
-        body=msg,
-        from_=from_whatsapp_number, 
-        to=to_whatsapp_number
+    history = chat_history_service.get_user_history(
+        user_id=current_user.id,
+        limit=limit,
+        session_id=session_id
     )
-
-def format_text(text, option='html'):
-    """Função para formatar texto"""
-    if option == 'html':
-        text = text.replace('\n', '<br>')
-    return text
-
-@app.route("/chatbot/ollama", methods=["GET", "POST"])
-@login_required
-def ollama_chatbot():
-    if request.method == "POST":
-        data = request.get_json()
-        user_message = data.get("message", "").strip()
-        
-        if not user_message:
-            return jsonify({"error": "Mensagem vazia."}), 400
-
-        if not ollama_service.check_ollama_status():
-            return jsonify({"error": "Serviço de IA indisponível."}), 503
-      
-        try:
-            response = ollama_service.get_chatbot_response(user_message)
-            answer = format_text(response, option='html')   
-        except Exception as e:
-            print(f"Erro no chatbot: {e}")
-            answer = "Desculpe, ocorreu um erro ao processar sua solicitação."
-
-        return jsonify({"answer": answer})
-
-    return render_template("chatbot.html")
-
-
-@app.route("/chatbot/ollama/status", methods=["GET"])
-def chatbot_status():
-    """Verifica status do Ollama"""
-    status = ollama_service.check_ollama_status()
-    models = ollama_service.list_models() if status else []
     
     return jsonify({
-        "ollama_running": status,
-        "available_models": [model.get('name', '') for model in models]
+        "history": [h.to_dict() for h in history]
+    })
+
+@app.route("/chat/history/delete", methods=["POST"])
+@login_required
+def delete_chat_history():
+    """Deleta histórico de chat do usuário"""
+    count = chat_history_service.delete_user_history(current_user.id)
+    return jsonify({
+        "success": True,
+        "deleted": count
     })
 
 
-@app.route('/whatsapp', methods=['GET', 'POST'])
+@app.route("/chatbot", methods=["GET", "POST"])
 @csrf.exempt
-def whatsapp():
-    user_message = request.form.get('Body', '') 
-
-    similar_questions = Question.query.filter(Question.question_text.ilike(f"%{user_message}%")).all()
-
-    response = MessagingResponse()
-    msg = response.message()
-    msg.body(f"Recebemos sua mensagem: {user_message}")
-
-    if similar_questions:
-        answer = similar_questions[0].answer
-        responder_mensagem(answer)
-    else:
-        all_questions = Question.query.all()
-
-        contexto = ""
-        for question in all_questions:
-            contexto += f"Pergunta: {question.question_text}\n Resposta: {question.answer}\n"
+@login_required
+def chatbot():
+    if request.method == "GET":
+        try:
+            available_models = get_available_models(ollama_url=None)
+            return render_template("chatbot.html", available_models=available_models)
+        except Exception as e:
+            flash(f"Erro ao carregar página: {str(e)}", "error")
+            return redirect(url_for('index'))
+    
+    try:
+        if 'image' in request.files and request.files['image'].filename:
+            image_file = request.files['image']
+            extraction_mode = request.form.get('mode', 'text')
+            
+            crop_box = None
+            if all(k in request.form for k in ['crop_x1', 'crop_y1', 'crop_x2', 'crop_y2']):
+                crop_box = (
+                    int(request.form['crop_x1']),
+                    int(request.form['crop_y1']),
+                    int(request.form['crop_x2']),
+                    int(request.form['crop_y2'])
+                )
+            
+            extraction_result = process_image(image_file, mode=extraction_mode, crop_box=crop_box)
+            
+            if not extraction_result["success"]:
+                return jsonify({"error": extraction_result["error"]}), 400
+            
+            if extraction_result["type"] == "latex":
+                user_message = f"Explique esta fórmula: {extraction_result['content']}"
+            else:
+                user_message = extraction_result["content"]
+            
+            model_type = request.form.get("model", "gemini")
+            session_id = request.form.get("session_id") or chat_history_service.create_session_id()
         
-        response = model.generate_content(f"Use o seguinte contexto {contexto} para responder a seguinte,\n Pergunta: {user_message}")
-        aux = response.text.strip()
+        else:
+            if request.is_json:
+                data = request.get_json()
+                user_message = data.get("message", "").strip()
+                model_type = data.get("model", "gemini")
+                session_id = data.get("session_id") or chat_history_service.create_session_id()
+            else:
+                user_message = request.form.get("message", "").strip()
+                model_type = request.form.get("model", "gemini")
+                session_id = request.form.get("session_id") or chat_history_service.create_session_id()
+            
+            if not user_message:
+                return jsonify({"error": "Mensagem vazia"}), 400
+        
+        recent_history = chat_history_service.get_recent_history(current_user.id, hours=2, limit=5)
+        context = "\n".join([f"User: {h.message}\nBot: {h.response}" for h in reversed(recent_history)])
+        
+        ollama_url = request.form.get("ollama_url", None)
+        
+        result = generate_response(
+            message=user_message,
+            model_type=model_type,
+            ollama_url=ollama_url,
+            context=context
+        )
+        
+        if not result["success"]:
+            error_msg = result.get("error", "Erro ao gerar resposta")
+            return jsonify({"error": error_msg}), 500
+        
+        try:
+            chat_history_service.save_message(
+                user_id=current_user.id,
+                message=user_message,
+                response=result["response"],
+                model_used=result["model"],
+                service_type=result["type"],
+                session_id=session_id
+            )
+        except Exception as e:
+            pass
+        
+        return jsonify({
+            "response": result["response"],
+            "model": result["model"],
+            "type": result["type"],
+            "session_id": session_id
+        })
+        
+    except Exception as e:
+        return jsonify({"error": "Erro interno do servidor"}), 500
 
-        answer = format_text(aux, option='plain')  
 
-        responder_mensagem(answer)
+@app.route("/api/extraction-status", methods=["GET"])
+@login_required
+def extraction_status():
+    """Retorna status dos serviços de extração de imagem"""
+    status = get_service_status()
+    return jsonify(status)
 
-    return str(msg)
+
+@app.route("/api/models/available", methods=["GET", "POST"])
+@login_required
+def get_available_models_api():
+    """API: Retorna modelos disponíveis dinamicamente"""
+    try:
+        ollama_url = None
+        if request.method == "POST":
+            data = request.get_json()
+            ollama_url = data.get("ollama_url") if data else None
+        
+        models = get_available_models(ollama_url=ollama_url)
+        
+        import os
+        has_gemini = bool(os.environ.get("GEMINI_API_KEY"))
+        has_ollama_url = bool(ollama_url)
+        
+        return jsonify({
+            "models": models,
+            "config": {
+                "gemini_configured": has_gemini,
+                "ollama_configured": has_ollama_url,
+                "ollama_url": ollama_url,
+                "default_model": os.environ.get("DEFAULT_MODEL", "gemini")
+            }
+        })
+    except Exception as e:
+        return jsonify({
+            "error": str(e), 
+            "models": {},
+            "config": {
+                "gemini_configured": False,
+                "ollama_configured": False,
+                "ollama_url": None,
+                "default_model": "gemini"
+            }
+        }), 200
+
+
+@app.route('/whatsapp', methods=['POST'])
+@csrf.exempt
+def whatsapp_webhook():
+    """
+    Webhook do Twilio para integração com WhatsApp.
+    Usa o Gemini via unified_chatbot com as mesmas regras de negócio do /chatbot.
+    """
+    if not TWILIO_AVAILABLE:
+        return "Twilio não configurado", 500
+    
+    try:
+        user_message = request.form.get('Body', '').strip()
+        from_number = request.form.get('From', '')
+        
+        response = MessagingResponse()
+        
+        if not user_message:
+            response.message("Por favor, envie uma mensagem.")
+            return str(response)
+        
+        session_id = from_number.replace('whatsapp:', '').replace('+', '').replace(' ', '')
+        
+        """
+        Busca histórico recente (usando session_id como user_id temporário)
+        Nota: Para produção, você pode querer criar um usuário específico para WhatsApp
+        """
+        try:
+            from app.models.tables import ChatHistory
+            recent_messages = ChatHistory.query.filter_by(
+                session_id=session_id
+            ).order_by(
+                ChatHistory.timestamp.desc()
+            ).limit(5).all()
+            
+            context = "\n".join([
+                f"User: {h.message}\nBot: {h.response}" 
+                for h in reversed(recent_messages)
+            ])
+        except:
+            context = ""
+        
+        result = generate_response(
+            message=user_message,
+            model_type="gemini",
+            ollama_url=None,
+            context=context
+        )
+        
+        if not result["success"]:
+            error_msg = "Desculpe, não consegui processar sua mensagem no momento. Tente novamente."
+            response.message(error_msg)
+            return str(response)
+        
+        """
+        Formata resposta especificamente para WhatsApp
+        Converte Markdown para formato WhatsApp, limita tamanho e melhora legibilidade
+        """
+        bot_response = format_for_whatsapp(result["response"], max_length=1500)
+        
+        try:
+            # TODO Cria um registro genérico para WhatsApp
+            # TODO Se quiser associar a um utilizador real, você precisará implementar
+            # TODO um sistema de autenticação via WhatsApp
+            chat_history_service.save_message(
+                user_id=1,  # User ID genérico para WhatsApp (você pode criar um Utilizador "WhatsApp Bot")
+                message=user_message,
+                response=result["response"],
+                model_used=result["model"],
+                service_type="whatsapp",
+                session_id=session_id  # Usa número do telefone como session_id
+            )
+        except Exception as e:
+            app.logger.error(f"Erro ao salvar histórico WhatsApp: {str(e)}")
+        
+        response.message(bot_response)
+        
+        return str(response)
+        
+    except Exception as e:
+        app.logger.error(f"Erro no webhook WhatsApp: {str(e)}")
+        response = MessagingResponse()
+        response.message("Desculpe, ocorreu um erro. Por favor, tente novamente.")
+        return str(response)
+        

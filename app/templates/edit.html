@@ -1,9 +1,51 @@
 {% extends "base.html" %}
-{% block title %} {{ super() }} - Editar utilizador {% endblock %}
+
+{% block title %}StudentHub - Editar Perfil{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/editar.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+{% endblock %}
+
 {% block content %}
-<div class="base-container">
-    <img src="{{ url_for('static', filename='images/profilw.png') }}" alt="" class="profile">
-    <h1>Editar <span>utilizador</span></h1>
+<div class="floating-particles" aria-hidden="true">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+</div>
+
+<div class="page-wrapper" style="display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 2rem 1rem;">
+    <div class="edit-container">
+        <div class="edit-header">
+            <a href="{{ url_for('chatbot') }}" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                Voltar ao Chat
+            </a>
+            <h1>Editar <span>Perfil</span></h1>
+        </div>
+    
+    <div class="profile-image-section">
+        <div class="profile-image-container">
+            <div class="profile-image" id="profileImage">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="upload-overlay" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-camera"></i>
+            </div>
+        </div>
+        <div class="upload-buttons">
+            <button type="button" class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-upload"></i>
+                Escolher Foto
+            </button>
+            <button type="button" class="crop-btn" id="cropBtn" disabled onclick="openCropModal()">
+                <i class="fas fa-crop"></i>
+                Ajustar
+            </button>
+        </div>
+    </div>
+
     {% with messages = get_flashed_messages() %}
         {% if messages %}
         <div class="alert alert-warning">
@@ -15,32 +57,104 @@
         </div>
         {% endif %}
     {% endwith %}
-    <form method="POST" action="{{ url_for('update_profile') }}">
+
+    <form method="POST" action="{{ url_for('update_profile') }}" id="profileForm" class="edit-form" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
-        <div>
-            {{ form.name.label }}
-            {{ form.name(size=32) }}
-            {% for error in form.name.errors %}
-                <span class="error">{{ error }}</span>
-            {% endfor %}
+        {{ form.profile_image(id="fileInput", class="file-input", accept="image/*", style="display: none;") }}
+        
+        <div class="form-group">
+            <label for="name" class="form-label">
+                <i class="fas fa-user"></i>
+                Nome Completo
+            </label>
+            {{ form.name(class="form-control", placeholder="João Silva") }}
+            {% if form.name.errors %}
+                <div class="error-message">
+                    {% for error in form.name.errors %}
+                        <small>{{ error }}</small>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
-        <div>
-            {{ form.email.label }}
-            {{ form.email(size=32) }}
-            {% for error in form.email.errors %}
-                <span class="error">{{ error }}</span>
-            {% endfor %}
+        
+        <div class="form-group">
+            <label for="email" class="form-label">
+                <i class="fas fa-envelope"></i>
+                Email
+            </label>
+            {{ form.email(class="form-control", placeholder="seu@email.com") }}
+            {% if form.email.errors %}
+                <div class="error-message">
+                    {% for error in form.email.errors %}
+                        <small>{{ error }}</small>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
-        <div>
-            {{ form.tel.label }}
-            {{ form.tel(size=32) }}
-            {% for error in form.tel.errors %}
-                <span class="error">{{ error }}</span>
-            {% endfor %}
+        
+        <div class="form-group">
+            <label for="tel" class="form-label">
+                <i class="fas fa-phone"></i>
+                Telefone
+            </label>
+            {{ form.tel(class="form-control", placeholder="+258 84 123 4567") }}
+            {% if form.tel.errors %}
+                <div class="error-message">
+                    {% for error in form.tel.errors %}
+                        <small>{{ error }}</small>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
-        <div>
-            <button type="submit" class="btn btn-primary">Atualizar</button>
+    
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i>
+                Salvar Alterações
+            </button>
+            <a href="{{ url_for('chatbot') }}" class="btn btn-secondary">
+                <i class="fas fa-times"></i>
+                Cancelar
+            </a>
         </div>
     </form>
+    </div>
 </div>
+
+<div class="crop-modal" id="cropModal">
+    <div class="crop-container">
+        <h3 style="color: #2c3e50; text-align: center; margin-bottom: 1.5rem;">Ajustar Foto do Perfil</h3>
+        
+        <div class="crop-area" id="cropArea">
+            <img id="cropImage" class="crop-image" alt="Imagem para corte">
+        </div>
+        
+        <div class="crop-controls">
+            <div class="rotation-buttons" style="display: flex; gap: 0.75rem; justify-content: center; margin-bottom: 1rem;">
+                <button type="button" class="btn-icon" onclick="rotateImage(-90)" title="Girar 90° esquerda">
+                    <i class="fas fa-undo"></i>
+                </button>
+                <button type="button" class="btn-icon" onclick="rotateImage(90)" title="Girar 90° direita">
+                    <i class="fas fa-redo"></i>
+                </button>
+            </div>
+            
+            <div class="crop-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeCropModal()">
+                    <i class="fas fa-times"></i>
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" onclick="applyCrop()">
+                    <i class="fas fa-check"></i>
+                    Aplicar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<script src="{{ url_for('static', filename='js/edit_profile.js') }}"></script>
 {% endblock %}

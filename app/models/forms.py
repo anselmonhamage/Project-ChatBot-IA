@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, PasswordField, BooleanField
-from wtforms.validators import DataRequired, EqualTo
+from wtforms.validators import DataRequired, EqualTo, Optional
 
 class LoginForm(FlaskForm):
     email = StringField("email", validators=[DataRequired()])
@@ -18,7 +19,8 @@ class UpdateProfileForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired()])
     tel = StringField("tel", validators=[DataRequired()])
-
-class QuestionForm(FlaskForm):
-    question_text = StringField('question', validators=[DataRequired()])
-    answer = StringField('answer', validators=[DataRequired()])
+    profile_image = FileField('Profile Image', validators=[
+        Optional(),
+        FileAllowed(['jpg', 'jpeg', 'png', 'gif'], 'Apenas imagens são permitidas!')
+    ])
+    

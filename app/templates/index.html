@@ -1,46 +1,121 @@
-{% extends 'base.html' %}
-{% block title %} {{ super() }} - Home {% endblock %}
+{% extends "base.html" %}
+
+{% block title %}StudentHub - Home{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+{% endblock %}
+
 {% block content %}
+<div class="floating-elements">
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+</div>
+
 <header>
-    <div class="logo">
-        <h1>Student<span>Hub</span></h1>
-    </div>
-    <nav>
-        <ul>
-            <li><a href="{{ url_for('login') }}">Login</a></li>
-        </ul>
-    </nav>
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <div class="alert alert-warning">
-            <ul class="flashes">
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-            </ul>
+    <div class="header-container">
+        <div class="logo">
+            <h1>Student<span>Hub</span></h1>
         </div>
-        {% endif %}
-    {% endwith %}
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+            </ul>
+        </nav>
+    </div>
 </header>
+
 <main>
-    <div class="content">
-        <div class="carousel-container">
-            <div class="carousel">
-                <div class="carousel-item"><h1>Assistência.</h1></div>
-                <div class="carousel-item"><h1>Consulta de dados.</h1></div>
-                <div class="carousel-item"><h1>Relatorios.</h1></div>
-                <div class="carousel-item"><h1>Conversa em tempo real.</h1> </div>
-                <div class="carousel-item"> <h1>Uma forma nova <br>de ir ao HelpDesk</h1></div>
+    <div class="main-container">
+        <div class="mobile-container">
+            <div class="content">
+                <div class="carousel-container">
+                    <div class="carousel">
+                        <div class="carousel-item">
+                            <div class="carousel-logo">
+                                <img src="{{ url_for('static', filename='images/TheStudySquad.jpg') }}" alt="Logo">
+                            </div>
+                            <h1>Todo conhecimento,<br> um só lugar.</h1>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="carousel-logo">
+                                <img src="{{ url_for('static', filename='images/TheStudySquad.jpg') }}" alt="Logo">
+                            </div>
+                            <h1>Seu assistente de estudos<br> 24/7.</h1>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="carousel-logo">
+                                <img src="{{ url_for('static', filename='images/TheStudySquad.jpg') }}" alt="Logo">
+                            </div>
+                            <h1>Contexto preservado,<br> sempre.</h1>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="carousel-logo">
+                                <img src="{{ url_for('static', filename='images/TheStudySquad.jpg') }}" alt="Logo">
+                            </div>
+                            <h1>Conversa em tempo real.</h1>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="carousel-logo">
+                                <img src="{{ url_for('static', filename='images/TheStudySquad.jpg') }}" alt="The Study Squad">
+                            </div>
+                            <h1>Uma forma nova<br>de aprender.</h1>
+                        </div>
+                    </div>
+                </div>
+
+                <p><span>Apoio</span> ao estudante, <span>online!</span></p>
+                <a href="{{ url_for('signup') }}" class="cta-button">
+                    Começar Agora
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+
+            <div class="app-showcase">
+                <div class="showcase-wrapper">
+                    <img src="{{ url_for('static', filename='images/template.jpg') }}" alt="StudentHub App Showcase" class="showcase-image">
+                </div>
             </div>
         </div>
+    </div>
+</main>
 
-        <script src="{{ url_for('static', filename='js/index.js') }}"></script>
-       
-        <p><span>Apoio </span> ao estudante, <span>online!</span></p>
-        <a href="{{ url_for('signup') }}"><button>Signup</button></a>
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-sections">
+            <div class="footer-section">
+                <h4>StudentHub</h4>
+                <p>Plataforma inteligente de estudos</p>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Contato</h4>
+                <p><i class="fas fa-envelope"></i> contact@studenthub.com</p>
+                <p><i class="fas fa-phone"></i> +258 84 123 4567</p>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Redes Sociais</h4>
+                <div class="social-links">
+                    <a href="#" title="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2025 StudentHub. Todos os direitos reservados</p>
+            <p>Desenvolvido por <strong>Nexel Team</strong> em colaboração com <strong>The Study Squad</strong></p>
+        </div>
     </div>
-    <div class="app-showcase">
-        <img src="{{ url_for('static', filename='images/home.jpg') }}" alt="App Showcase">
-    </div>
-</main>  
+</footer>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+<script src="{{ url_for('static', filename='js/index-main.js') }}"></script>
 {% endblock %}
